@@ -1,12 +1,19 @@
 package com.duzceders.aicaltracker.product.models;
+
 import com.google.firebase.Timestamp;
+
 import lombok.Getter;
 import lombok.Setter;
+
+enum MealType {
+    BREAKFAST, LAUNCH, DINNER, SNACK,
+}
+
 @Getter
 @Setter
 public class Meal {
     private String meal_name;
-    private String meal_type; // breakfast, lunch, dinner
+    private MealType meal_type;
     private String image_url;
     private String user_note;
 
@@ -17,6 +24,8 @@ public class Meal {
 
     private Timestamp meal_time;
 
-    public Meal() {}
-
+    public Meal() {
+    }
 }
+
+
