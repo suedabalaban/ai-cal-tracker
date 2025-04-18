@@ -2,12 +2,20 @@ package com.duzceders.aicaltracker.product.service;
 
 import android.net.Uri;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.manager.FirebaseServiceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.UUID;
@@ -15,7 +23,7 @@ import java.util.function.Consumer;
 
 public class FirebaseRepository {
 
-    private static final String TAG = "FirebaseRepository";
+    public static final String TAG = "FirebaseRepository";
     private final FirebaseFirestore db;
     private final FirebaseAuth auth;
 
@@ -25,23 +33,31 @@ public class FirebaseRepository {
         auth = manager.getFirebaseAuth();
     }
 
+    /// example: Gets all users in firebase
     public void getUsersFirebase(Consumer<QuerySnapshot> onSuccess, Consumer<Exception> onFailure) {
         db.collection("users")
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        onSuccess.accept(task.getResult());
-                    } else {
-                        onFailure.accept(task.getException());
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
                     }
                 });
     }
 
+    /// Gets current user's uid if its null returns null
     private String getCurrentUserId() {
         FirebaseUser user = auth.getCurrentUser();
         return user != null ? user.getUid() : null;
     }
 
+    /// Add user to firestore with user information.
     public void addUser(User user) {
         String userId = getCurrentUserId();
         if (userId == null) {
@@ -50,11 +66,21 @@ public class FirebaseRepository {
         }
 
         db.collection("users").document(userId).set(user)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "User added"))
-                .addOnFailureListener(e -> Log.e(TAG, "User add failed", e));
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
 
-    public void addMeal(Meal meal, Uri imageUri) {
+    public void addMeal(Meal meal) {
         String userId = getCurrentUserId();
         if (userId == null) {
             Log.e(TAG, "User not authenticated");
@@ -66,7 +92,17 @@ public class FirebaseRepository {
                 .collection("meals")
                 .document(mealId)
                 .set(meal)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Meal added"))
-                .addOnFailureListener(e -> Log.e(TAG, "Meal save failed", e));
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
 }
