@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/background_signup"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/activity_level_question"
+        app:layout_constraintTop_toBottomOf="@id/signUpText"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp" />
+
+    <RadioGroup
+        android:id="@+id/activityLevelGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <RadioButton
+            android:id="@+id/radioNoActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_activity"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary"
+            android:padding="14dp"
+            android:background="@drawable/radio_button_background"
+            android:button="@null"
+            android:drawableStart="@drawable/ic_no_activity"
+            android:drawablePadding="14dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/radio_button_margin"/>
+
+        <RadioButton
+            android:id="@+id/radioLowActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/low_activity"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary"
+            android:padding="14dp"
+            android:background="@drawable/radio_button_background"
+            android:button="@null"
+            android:drawableStart="@drawable/ic_low_activity"
+            android:drawablePadding="14dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/radio_button_margin"/>
+
+        <RadioButton
+            android:id="@+id/radioActive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/medium_activity"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary"
+            android:padding="14dp"
+            android:background="@drawable/radio_button_background"
+            android:button="@null"
+            android:drawableStart="@drawable/ic_active"
+            android:drawablePadding="14dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/radio_button_margin"/>
+
+        <RadioButton
+            android:id="@+id/radioVeryActive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/high_activity"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary"
+            android:padding="14dp"
+            android:background="@drawable/radio_button_background"
+            android:button="@null"
+            android:drawableStart="@drawable/ic_very_active"
+            android:drawablePadding="14dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/radio_button_margin"/>
+
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirmButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        android:textColor="@color/button_text"
+        android:backgroundTint="@color/button_background"
+        android:layout_marginTop="32dp"
+        android:layout_gravity="center" />
+</LinearLayout>
