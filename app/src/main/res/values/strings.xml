@@ -77,4 +77,5 @@
     <string name="create_account">Create your account</string>
     <string name="back">Back</string>
     <string name="personal_info">Tell us about yourself</string>
+    <string name="body_fat">Body Fat</string>
 </resources>
