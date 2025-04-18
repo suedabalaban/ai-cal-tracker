@@ -2,16 +2,19 @@ package com.duzceders.aicaltracker.home;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.duzceders.aicaltracker.R;
+import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class CalorieTracker extends AppCompatActivity {
 
     private NutritionData nutritionData;
-
 
     private TextView totalCaloriesValue;
     private TextView totalProteinValue;
@@ -23,19 +26,36 @@ public class CalorieTracker extends AppCompatActivity {
     private CircularProgressIndicator circularProgressCarbs;
     private CircularProgressIndicator circularProgressFats;
 
+    private FirebaseRepository firebaseRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_calorie_tracker);
 
         initializeViews();
-
 
         loadSampleData();
 
         updateUI();
 
         setClickListeners();
+
+        firebaseRepository = new FirebaseRepository();
+        firebaseRepository.getUsersFirebase(
+                users -> {
+
+                    for (QueryDocumentSnapshot document : users) {
+
+                        Log.d("CalorieTracker", document.getId() + " => " + document.getData());
+                    }
+                },
+                exception -> {
+
+                    Log.e("CalorieTracker", "Error fetching users", exception);
+                }
+        );
     }
 
     private void initializeViews() {
@@ -44,7 +64,6 @@ public class CalorieTracker extends AppCompatActivity {
         totalProteinValue = findViewById(R.id.totalProteinValue);
         totalCarbsValue = findViewById(R.id.totalCarbsValue);
         totalFatsValue = findViewById(R.id.totalFatsValue);
-
 
         circularProgressCalories = findViewById(R.id.circularProgressCalories);
         circularProgressProtein = findViewById(R.id.circularProgressProtein);
@@ -58,12 +77,10 @@ public class CalorieTracker extends AppCompatActivity {
         int targetCarbs = 300;
         int targetFats = 80;
 
-
         int consumedCalories = 613;
         int consumedProtein = 37;
         int consumedCarbs = 110;
         int consumedFats = 28;
-
 
         nutritionData = new NutritionData(
                 targetCalories, targetProtein, targetCarbs, targetFats,
@@ -91,7 +108,7 @@ public class CalorieTracker extends AppCompatActivity {
     }
 
     private int calculateProgress(int consumed, int target) {
-        return (int)(((float)consumed / target) * 100);
+        return (int) (((float) consumed / target) * 100);
     }
 
     private void setClickListeners() {
@@ -111,7 +128,7 @@ public class CalorieTracker extends AppCompatActivity {
         private final int targetCarbs;
         private final int targetFats;
 
-        private final int  consumedCalories;
+        private final int consumedCalories;
         private final int consumedProtein;
         private final int consumedCarbs;
         private final int consumedFats;
@@ -129,19 +146,52 @@ public class CalorieTracker extends AppCompatActivity {
             this.consumedFats = consumedFats;
         }
 
-        public int getTargetCalories() { return targetCalories; }
-        public int getTargetProtein() { return targetProtein; }
-        public int getTargetCarbs() { return targetCarbs; }
-        public int getTargetFats() { return targetFats; }
+        public int getTargetCalories() {
+            return targetCalories;
+        }
 
-        public int getConsumedCalories() { return consumedCalories; }
-        public int getConsumedProtein() { return consumedProtein; }
-        public int getConsumedCarbs() { return consumedCarbs; }
-        public int getConsumedFats() { return consumedFats; }
+        public int getTargetProtein() {
+            return targetProtein;
+        }
 
-        public int getRemainingCalories() { return targetCalories - consumedCalories; }
-        public int getRemainingProtein() { return targetProtein - consumedProtein; }
-        public int getRemainingCarbs() { return targetCarbs - consumedCarbs; }
-        public int getRemainingFats() { return targetFats - consumedFats; }
+        public int getTargetCarbs() {
+            return targetCarbs;
+        }
+
+        public int getTargetFats() {
+            return targetFats;
+        }
+
+        public int getConsumedCalories() {
+            return consumedCalories;
+        }
+
+        public int getConsumedProtein() {
+            return consumedProtein;
+        }
+
+        public int getConsumedCarbs() {
+            return consumedCarbs;
+        }
+
+        public int getConsumedFats() {
+            return consumedFats;
+        }
+
+        public int getRemainingCalories() {
+            return targetCalories - consumedCalories;
+        }
+
+        public int getRemainingProtein() {
+            return targetProtein - consumedProtein;
+        }
+
+        public int getRemainingCarbs() {
+            return targetCarbs - consumedCarbs;
+        }
+
+        public int getRemainingFats() {
+            return targetFats - consumedFats;
+        }
     }
 }
