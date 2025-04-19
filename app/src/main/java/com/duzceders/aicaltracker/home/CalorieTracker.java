@@ -26,7 +26,6 @@ public class CalorieTracker extends AppCompatActivity {
     private CircularProgressIndicator circularProgressCarbs;
     private CircularProgressIndicator circularProgressFats;
 
-    private FirebaseRepository firebaseRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,20 +41,6 @@ public class CalorieTracker extends AppCompatActivity {
 
         setClickListeners();
 
-        firebaseRepository = new FirebaseRepository();
-        firebaseRepository.getUsersFirebase(
-                users -> {
-
-                    for (QueryDocumentSnapshot document : users) {
-
-                        Log.d("CalorieTracker", document.getId() + " => " + document.getData());
-                    }
-                },
-                exception -> {
-
-                    Log.e("CalorieTracker", "Error fetching users", exception);
-                }
-        );
     }
 
     private void initializeViews() {
