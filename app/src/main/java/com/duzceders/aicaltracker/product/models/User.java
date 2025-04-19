@@ -21,7 +21,9 @@ public class User {
 
     private double bmr;
     private double daily_calorie_needs;
+    private double daily_calorie_needs_left;
     private double daily_water_needs_liters;
+    private double daily_water_needs_left_liters;
 
     private CalorieGoals calorie_goals;
     private DailyMacros daily_macros;
@@ -46,9 +48,13 @@ public class User {
     @Getter
     @Setter
     public static class DailyMacros {
-        private double carbs_g;
-        private double fat_g;
-        private double protein_g;
+        private double daily_carbs_need_g;
+        private double daily_fats_need_g;
+        private double daily_proteins_need_g;
+
+        private double daily_carbs_left_g;
+        private double daily_fats_left_g;
+        private double daily_proteins_left_g;
 
         public DailyMacros() {
         }
