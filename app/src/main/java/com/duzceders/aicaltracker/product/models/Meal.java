@@ -1,13 +1,10 @@
 package com.duzceders.aicaltracker.product.models;
 
+import com.duzceders.aicaltracker.product.models.enums.MealType;
 import com.google.firebase.Timestamp;
 
 import lombok.Getter;
 import lombok.Setter;
-
-enum MealType {
-    BREAKFAST, LAUNCH, DINNER, SNACK,
-}
 
 @Getter
 @Setter

@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.duzceders.aicaltracker.home.CalorieTracker;
+import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -29,6 +31,8 @@ public class EmailPasswordActivity extends AppCompatActivity {
     private TextInputLayout emailTextField, passwordTextField;
     private MaterialButton btnLogin, btnSignUp;
 
+    FirebaseRepository firebaseRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         passwordTextField = findViewById(R.id.passwordTextField);
         btnLogin = findViewById(R.id.loginButton);
         btnSignUp = findViewById(R.id.signUpButton);
+        firebaseRepository= new FirebaseRepository();
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -104,7 +109,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EmailPasswordActivity.this, SignUpActivity.class );
+                Intent intent = new Intent(EmailPasswordActivity.this, SignUpActivity.class);
                 startActivity(intent);
             }
         });
@@ -151,6 +156,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(EmailPasswordActivity.this, "Authentication successful.",
                                     Toast.LENGTH_SHORT).show();
+                            navigateToMainActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
@@ -158,6 +164,12 @@ public class EmailPasswordActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(EmailPasswordActivity.this, CalorieTracker.class);
+        startActivity(intent);
+        finish();
     }
 
     private void reload() {
