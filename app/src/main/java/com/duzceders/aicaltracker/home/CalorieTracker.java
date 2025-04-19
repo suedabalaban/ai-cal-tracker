@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.provider.MediaStore;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -32,7 +33,6 @@ public class CalorieTracker extends AppCompatActivity {
     private static final int CAMERA_INTENT_REQUEST_CODE = 101;
     private static final int GALLERY_PERMISSION_REQUEST_CODE = 102;
     private static final int GALLERY_INTENT_REQUEST_CODE = 103;
-
 
 
     private TextView totalCaloriesValue;
@@ -131,41 +131,33 @@ public class CalorieTracker extends AppCompatActivity {
         final boolean[] isFabOpen = {false};
 
         fabMain.setOnClickListener(v -> {
-            if (isFabOpen[0]) {
-                fabCamera.setVisibility(View.GONE);
-                fabGallery.setVisibility(View.GONE);
-            } else {
-                fabCamera.setVisibility(View.VISIBLE);
-                fabGallery.setVisibility(View.VISIBLE);
-            }
+            int visibility = isFabOpen[0] ? View.GONE : View.VISIBLE;
+            fabCamera.setVisibility(visibility);
+            fabGallery.setVisibility(visibility);
             isFabOpen[0] = !isFabOpen[0];
         });
 
         fabCamera.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-            } else {
+            if (checkPermission(Manifest.permission.CAMERA, CAMERA_PERMISSION_REQUEST_CODE)) {
                 openCamera();
             }
         });
 
         fabGallery.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // Android 13 ve üzeri
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, GALLERY_PERMISSION_REQUEST_CODE);
-                } else {
-                    openGallery();
-                }
-            } else {
-                // Android 12 ve altı
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION_REQUEST_CODE);
-                } else {
-                    openGallery();
-                }
+            String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ? Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
+
+            if (checkPermission(permission, GALLERY_PERMISSION_REQUEST_CODE)) {
+                openGallery();
             }
         });
+    }
+
+    private boolean checkPermission(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+            return false;
+        }
+        return true;
     }
 
 
@@ -191,7 +183,6 @@ public class CalorieTracker extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -210,9 +201,6 @@ public class CalorieTracker extends AppCompatActivity {
                 break;
         }
     }
-
-
-
 
 
 }
