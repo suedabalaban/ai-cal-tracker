@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -97,15 +98,32 @@ public class CalorieTracker extends AppCompatActivity {
     }
 
     private void setClickListeners() {
+        FloatingActionButton fabMain = findViewById(R.id.fabMain);
+        FloatingActionButton fabCamera = findViewById(R.id.fabCamera);
+        FloatingActionButton fabGallery = findViewById(R.id.fabGallery);
 
-        findViewById(R.id.fabAddFood).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        final boolean[] isFabOpen = {false};
 
+        fabMain.setOnClickListener(v -> {
+            if (isFabOpen[0]) {
+                fabCamera.setVisibility(View.GONE);
+                fabGallery.setVisibility(View.GONE);
+            } else {
+                fabCamera.setVisibility(View.VISIBLE);
+                fabGallery.setVisibility(View.VISIBLE);
             }
+            isFabOpen[0] = !isFabOpen[0];
         });
 
+        fabCamera.setOnClickListener(v -> {
+            // Kameraya erişim işlemi buraya eklenecek
+        });
+
+        fabGallery.setOnClickListener(v -> {
+            // Galeriden seçim işlemi buraya eklenecek
+        });
     }
+
 
     private static class NutritionData {
         private final int targetCalories;
