@@ -1,3 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="min_touch_target">16dp</dimen>
+    <dimen name="radio_button_margin">6dp</dimen>
 </resources>
