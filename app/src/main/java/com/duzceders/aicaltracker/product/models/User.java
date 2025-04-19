@@ -1,11 +1,9 @@
 package com.duzceders.aicaltracker.product.models;
 
+import com.duzceders.aicaltracker.product.models.enums.ActivityLevel;
+
 import lombok.Getter;
 import lombok.Setter;
-
-enum ActivityLevel {
-    SEDENTARY, LIGHT, MODERATE, ACTIVE, VERY_ACTIVE
-}
 
 @Getter
 @Setter
