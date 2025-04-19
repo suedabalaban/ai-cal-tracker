@@ -78,4 +78,5 @@
     <string name="back">Geri</string>
     <string name="personal_info">Kendinizden bahsedin</string>
     <string name="body_fat">Yağ Oranı</string>
+    <string name="welcome">Hoş Geldin, %s</string>
 </resources>

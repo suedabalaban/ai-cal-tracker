@@ -1,25 +1,21 @@
 package com.duzceders.aicaltracker.product.service;
 
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.manager.FirebaseServiceManager;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class FirebaseRepository {
 
@@ -86,5 +82,31 @@ public class FirebaseRepository {
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
+    }
+
+
+    public LiveData<User> getUserByUID() {
+        MutableLiveData<User> userLiveData = new MutableLiveData<>();
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated");
+            userLiveData.setValue(null);
+            return userLiveData;
+        }
+        db.collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        User user = documentSnapshot.toObject(User.class);
+                        userLiveData.setValue(user);
+                    } else {
+                        userLiveData.setValue(null);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    userLiveData.setValue(null);
+                });
+        return userLiveData;
     }
 }
