@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth)
+    implementation(libs.activity)
     compileOnly (libs.lombok)
     annotationProcessor (libs.lombok)
     implementation(libs.appcompat)
