@@ -287,7 +287,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/circularProgressFats"
                     app:layout_constraintStart_toStartOf="@+id/circularProgressFats"
                     app:layout_constraintTop_toTopOf="@+id/circularProgressFats"
-                    app:srcCompat="@drawable/ic_water_drop"
+                    app:srcCompat="@drawable/ic_fat_drop"
                     tools:ignore="ContentDescription" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

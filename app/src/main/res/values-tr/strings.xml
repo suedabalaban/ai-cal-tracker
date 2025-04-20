@@ -7,6 +7,7 @@
     <string name="next">Sonraki</string>
     <string name="previous">Önceki</string>
 
+    <string name="test_number">1000</string>
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
@@ -51,6 +52,9 @@
     <string name="protein_left">Kalan protein</string>
     <string name="carbs_left">Kalan karbonhidrat</string>
     <string name="calories_left">Kalan kalori</string>
+    <string name="carbs">Karbonhidratlar</string>
+    <string name="fats">Yağlar</string>
+    <string name="proteins">Proteinler</string>
     <string name="_1887">1887</string>
     <string name="email">E-posta</string>
     <string name="password">Şifre</string>
@@ -79,4 +83,19 @@
     <string name="personal_info">Kendinizden bahsedin</string>
     <string name="body_fat">Yağ Oranı</string>
     <string name="welcome">Hoş Geldin, %s</string>
+    <string name="daily_calorie">Günlük Kalori</string>
+    <string name="macronutrients">Makro Besinler</string>
+    <string name="water_tracking">Su Takibi</string>
+    <string name="calorie_goals">Kalori Hedefleri</string>
+    <string name="weight_loss">Kilo Verme</string>
+    <string name="weight_maintenance">Kilo Koruma</string>
+    <string name="weight_gain">Kilo Alma</string>
+    <string name="liter">%d Litre</string>
+
+    <string name="cm"> %d cm</string>
+    <string name="kg"> %d kg</string>
+    <string name="percent">%d%</string>
+    <string name="total_kcal_number">/%d kcal </string>
+    <string name="total_gram_number">/%d g </string>
+
 </resources>
