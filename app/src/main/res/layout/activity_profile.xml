@@ -148,7 +148,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tvDailyCalorieLeft"
+                        android:id="@+id/tvDailyCalorieEaten"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/test_number"
@@ -157,6 +157,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvTotalCalorie"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/total_kcal_number"
@@ -227,21 +228,22 @@
                             android:textColor="@android:color/black" />
 
                         <TextView
-                            android:id="@+id/tvCarbsLeft"
+                            android:id="@+id/tvCarbsEaten"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/test_number"
-                            android:textColor="@android:color/darker_gray"
+                            android:textColor="@android:color/black"
                             android:textSize="16sp"
                            />
+
                         <TextView
                             android:id="@+id/tvTotalCarbs"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/total_gram_number"
-                            android:textColor="@android:color/black"
-                            android:textStyle="bold"
-                            android:textSize="16sp" />
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <ProgressBar
@@ -281,11 +283,11 @@
                             android:textColor="@android:color/black" />
 
                         <TextView
-                            android:id="@+id/tvProteinsLeft"
+                            android:id="@+id/tvProteinsEaten"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/test_number"
-                            android:textColor="@android:color/darker_gray"
+                            android:textColor="@android:color/black"
                             android:textSize="16sp"
                             />
                         <TextView
@@ -293,7 +295,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/total_gram_number"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/darker_gray"
                             android:textStyle="bold"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -334,11 +336,11 @@
                             android:textColor="@android:color/black" />
 
                         <TextView
-                            android:id="@+id/tvFatsLeft"
+                            android:id="@+id/tvFatsEaten"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/test_number"
-                            android:textColor="@android:color/darker_gray"
+                            android:textColor="@android:color/black"
                             android:textSize="16sp"
                             />
                         <TextView
@@ -346,7 +348,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/total_gram_number"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/darker_gray"
                             android:textStyle="bold"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -408,7 +410,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tvWaterLeft"
+                        android:id="@+id/tvWaterDrinked"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1.2 "
@@ -417,6 +419,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvTotalWater"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/liter"
