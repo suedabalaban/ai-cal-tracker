@@ -1,19 +1,38 @@
 package com.duzceders.aicaltracker.home;
 
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.provider.MediaStore;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.product.models.User;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.FirebaseApp;
 
 public class CalorieTracker extends AppCompatActivity {
+
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
+    private static final int CAMERA_INTENT_REQUEST_CODE = 101;
+    private static final int GALLERY_PERMISSION_REQUEST_CODE = 102;
+    private static final int GALLERY_INTENT_REQUEST_CODE = 103;
 
 
     private TextView totalCaloriesValue;
@@ -91,11 +110,100 @@ public class CalorieTracker extends AppCompatActivity {
         return (int) (((float) (target - left) / target) * 100);
     }
 
+    private void openCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, CAMERA_INTENT_REQUEST_CODE);
+        }
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, GALLERY_INTENT_REQUEST_CODE);
+    }
+
     private void setClickListeners() {
-        findViewById(R.id.fabAddFood).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        FloatingActionButton fabMain = findViewById(R.id.fabMain);
+        FloatingActionButton fabCamera = findViewById(R.id.fabCamera);
+        FloatingActionButton fabGallery = findViewById(R.id.fabGallery);
+
+        final boolean[] isFabOpen = {false};
+
+        fabMain.setOnClickListener(v -> {
+            int visibility = isFabOpen[0] ? View.GONE : View.VISIBLE;
+            fabCamera.setVisibility(visibility);
+            fabGallery.setVisibility(visibility);
+            isFabOpen[0] = !isFabOpen[0];
+        });
+
+        fabCamera.setOnClickListener(v -> {
+            if (checkPermission(Manifest.permission.CAMERA, CAMERA_PERMISSION_REQUEST_CODE)) {
+                openCamera();
+            }
+        });
+
+        fabGallery.setOnClickListener(v -> {
+            String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ? Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
+
+            if (checkPermission(permission, GALLERY_PERMISSION_REQUEST_CODE)) {
+                openGallery();
             }
         });
     }
+
+    private boolean checkPermission(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+            return false;
+        }
+        return true;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK) return;
+
+        if (requestCode == CAMERA_INTENT_REQUEST_CODE) {
+            Log.d("KAMERA", "Fotoğraf çekildi!");
+            Toast.makeText(this, "Fotoğraf başarıyla çekildi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (requestCode == GALLERY_INTENT_REQUEST_CODE && data != null) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri == null) return;
+
+            Log.d("GALERI", "Fotoğraf seçildi: " + selectedImageUri);
+            Toast.makeText(this, "Galeri fotoğrafı seçildi", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "İzin reddedildi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        switch (requestCode) {
+            case CAMERA_PERMISSION_REQUEST_CODE:
+                openCamera();
+                break;
+            case GALLERY_PERMISSION_REQUEST_CODE:
+                openGallery();
+                break;
+        }
+    }
+
+
 }
+
+
+
