@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.UserField;
 import com.duzceders.aicaltracker.product.service.manager.FirebaseServiceManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -84,7 +85,7 @@ public class FirebaseRepository {
                 });
     }
 
-
+    /// This method retrieves the current user's information from Firestore in viewmodels.
     public LiveData<User> getUserByUID() {
         MutableLiveData<User> userLiveData = new MutableLiveData<>();
         String userId = getCurrentUserId();
@@ -108,5 +109,32 @@ public class FirebaseRepository {
                     userLiveData.setValue(null);
                 });
         return userLiveData;
+    }
+
+    /// This method updates the current user's information in Firestore with UserField enum and value.
+    public void updateUser(UserField field, Object value) {
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated");
+            return;
+        }
+        if (field == null || value == null) {
+            Log.e(TAG, "Field or value is null");
+            return;
+        }
+
+        db.collection("users").document(userId).update(field.getFieldName(), value)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, field + " updated successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, field + " updated successfully", e);
+                    }
+                });
     }
 }
