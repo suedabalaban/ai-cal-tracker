@@ -104,5 +104,12 @@
     <string name="home_page">Home Page</string>
     <string name="logout">Logout</string>
 
+    <string name="edit_title">Edit %s</string>
+    <string name="edit_message">Please enter a new value.</string>
+    <string name="edit">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit_success">Your information has been successfully updated.</string>
+
+
 
 </resources>

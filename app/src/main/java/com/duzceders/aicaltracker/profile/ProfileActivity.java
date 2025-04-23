@@ -44,7 +44,28 @@ public class ProfileActivity extends AppCompatActivity {
         setWaterInfos(user);
         setCalorieGoals(user);
         setProgressBars(user);
+        setClickableTexts(user);
 
+    }
+
+
+    private void setClickableTexts(User user) {
+        ///Splash effect
+        binding.tvHeight.setBackgroundResource(R.drawable.clickable_background);
+        binding.tvWeight.setBackgroundResource(R.drawable.clickable_background);
+        binding.tvBodyFat.setBackgroundResource(R.drawable.clickable_background);
+
+        binding.tvHeight.setOnClickListener(v -> {
+
+        });
+
+        binding.tvWeight.setOnClickListener(v -> {
+
+        });
+
+        binding.tvBodyFat.setOnClickListener(v -> {
+
+        });
     }
 
     private void setCalorieGoals(User user) {
@@ -61,17 +82,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setAllMacros(User user) {
-        setMacro(binding.tvTotalCarbs, binding.tvCarbsEaten,
-                (int) user.getDaily_macros().getDaily_carbs_need_g(),
-                (int) user.getDaily_macros().getDaily_carbs_left_g());
+        setMacro(binding.tvTotalCarbs, binding.tvCarbsEaten, (int) user.getDaily_macros().getDaily_carbs_need_g(), (int) user.getDaily_macros().getDaily_carbs_left_g());
 
-        setMacro(binding.tvTotalProteins, binding.tvProteinsEaten,
-                (int) user.getDaily_macros().getDaily_proteins_need_g(),
-                (int) user.getDaily_macros().getDaily_proteins_left_g());
+        setMacro(binding.tvTotalProteins, binding.tvProteinsEaten, (int) user.getDaily_macros().getDaily_proteins_need_g(), (int) user.getDaily_macros().getDaily_proteins_left_g());
 
-        setMacro(binding.tvTotalFats, binding.tvFatsEaten,
-                (int) user.getDaily_macros().getDaily_fats_need_g(),
-                (int) user.getDaily_macros().getDaily_fats_left_g());
+        setMacro(binding.tvTotalFats, binding.tvFatsEaten, (int) user.getDaily_macros().getDaily_fats_need_g(), (int) user.getDaily_macros().getDaily_fats_left_g());
     }
 
     private void setCalories(User user) {
@@ -82,14 +97,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setUserInfos(User user) {
         binding.tvUserFullName.setText(user.getName() + " " + user.getSurname());
-        setFormattedText(binding.tvHeight, R.string.cm, (int) user.getHeight_cm());
-        setFormattedText(binding.tvWeight, R.string.kg, (int) user.getWeight_kg());
-        setFormattedText(binding.tvBodyFat, R.string.percent, (int) user.getBody_fat_percent());
+        binding.tvHeight.setText(user.getHeight_cm() + " cm");
+        binding.tvWeight.setText(user.getWeight_kg() + " kg");
+        binding.tvBodyFat.setText(user.getBody_fat_percent() + " %");
     }
 
     private void setMacro(TextView totalView, TextView eatenView, int total, int left) {
         setFormattedText(totalView, R.string.total_kcal_number, total);
-        setTvNumber(eatenView,  total - left);
+        setTvNumber(eatenView, total - left);
     }
 
     private void setFormattedText(TextView textView, int formatResId, int value) {
@@ -97,14 +112,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    private void setFormattedText(TextView textView, String format, Object value) {
-        textView.setText(String.format(format, value));
-    }
-
     private void setTvNumber(TextView textView, Object value) {
         textView.setText(String.valueOf(value));
     }
-
 
     private int calculateProgress(double left, double target) {
         return (int) (((float) (target - left) / target) * 100);
@@ -116,4 +126,5 @@ public class ProfileActivity extends AppCompatActivity {
         binding.progressCarbs.setProgress(calculateProgress(user.getDaily_macros().getDaily_carbs_left_g(), user.getDaily_macros().getDaily_carbs_need_g()));
         binding.progressFats.setProgress(calculateProgress(user.getDaily_macros().getDaily_fats_left_g(), user.getDaily_macros().getDaily_fats_need_g()));
     }
+
 }

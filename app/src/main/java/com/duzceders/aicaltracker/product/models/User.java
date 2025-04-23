@@ -1,7 +1,6 @@
 package com.duzceders.aicaltracker.product.models;
 
 import com.duzceders.aicaltracker.product.models.enums.ActivityLevel;
-import com.google.type.DateTime;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ public class User {
     private String name;
     private String surname;
     private String email;
-    private DateTime birthdate;
+    private String birthdate;
 
     private int height_cm;
     private int weight_kg;

@@ -105,4 +105,11 @@
     <string name="home_page">Ana Sayfa</string>
     <string name="logout">Çıkış Yap</string>
 
+    <string name="edit_title">%s Güncelle</string>
+    <string name="edit_message">Lütfen yeni bir değer girin.</string>
+    <string name="edit">Güncelle</string>
+    <string name="cancel">İptal Et</string>
+
+    <string name="edit_success">Bilgileriniz başarıyla güncellendi.</string>
+
 </resources>
