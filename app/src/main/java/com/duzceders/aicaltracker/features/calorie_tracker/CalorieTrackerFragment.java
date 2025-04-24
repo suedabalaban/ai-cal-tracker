@@ -10,18 +10,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
-import com.duzceders.aicaltracker.databinding.ActivityCalorieTrackerBinding;
+import com.duzceders.aicaltracker.databinding.FragmentCalorieTrackerBinding;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.manager.CloudinaryServiceManager;
@@ -30,48 +32,54 @@ import com.google.firebase.FirebaseApp;
 
 import java.util.Objects;
 
-public class CalorieTracker extends AppCompatActivity {
+public class CalorieTrackerFragment extends Fragment {
 
-    private ActivityCalorieTrackerBinding binding;
+    private FragmentCalorieTrackerBinding binding;
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private static final int CAMERA_INTENT_REQUEST_CODE = 101;
     private static final int GALLERY_PERMISSION_REQUEST_CODE = 102;
     private static final int GALLERY_INTENT_REQUEST_CODE = 103;
 
-    private static final String TAG = "CalorieTracker";
-
+    private static final String TAG = "CalorieTrackerFragment";
 
     private CloudinaryServiceManager cloudinaryServiceManager;
+    private CalorieTrackerViewModel viewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(requireContext());
         FirebaseRepository firebaseRepository = new FirebaseRepository();
-        binding = ActivityCalorieTrackerBinding.inflate(getLayoutInflater());
-        setContentView(R.layout.activity_calorie_tracker);
+        viewModel = new ViewModelProvider(this).get(CalorieTrackerViewModel.class);
+        cloudinaryServiceManager = new CloudinaryServiceManager(requireContext());
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentCalorieTrackerBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        CalorieTrackerViewModel viewModel = new ViewModelProvider(this).get(CalorieTrackerViewModel.class);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        cloudinaryServiceManager = new CloudinaryServiceManager(this);
-
-        viewModel.getUserData().observe(this, user -> {
+        viewModel.getUserData().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
                 updateUiWithUserData(user);
             } else {
-                Toast.makeText(this, "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
             }
         });
 
         setClickListeners();
     }
 
-
     private void updateUiWithUserData(User user) {
         String welcomeMessage = getResources().getString(R.string.welcome, user.getName() + " " + user.getSurname());
-        binding.welcomeText.setText(welcomeMessage);
+//        binding.welcomeText.setText(welcomeMessage);
 
         binding.totalCaloriesValue.setText(String.valueOf(user.getDaily_calorie_needs_left()));
         binding.totalProteinValue.setText(String.valueOf(user.getDaily_macros().getDaily_proteins_left_g()));
@@ -96,7 +104,7 @@ public class CalorieTracker extends AppCompatActivity {
     @SuppressLint("QueryPermissionsNeeded")
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+        if (cameraIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
             startActivityForResult(cameraIntent, CAMERA_INTENT_REQUEST_CODE);
         }
     }
@@ -109,9 +117,9 @@ public class CalorieTracker extends AppCompatActivity {
     }
 
     private void setClickListeners() {
-        FloatingActionButton fabMain = findViewById(R.id.fabMain);
-        FloatingActionButton fabCamera = findViewById(R.id.fabCamera);
-        FloatingActionButton fabGallery = findViewById(R.id.fabGallery);
+        FloatingActionButton fabMain = binding.fabMain;
+        FloatingActionButton fabCamera = binding.fabCamera;
+        FloatingActionButton fabGallery = binding.fabGallery;
 
         final boolean[] isFabOpen = {false};
 
@@ -129,7 +137,8 @@ public class CalorieTracker extends AppCompatActivity {
         });
 
         fabGallery.setOnClickListener(v -> {
-            String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ? Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
+            String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ?
+                    Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
 
             if (checkPermission(permission, GALLERY_PERMISSION_REQUEST_CODE)) {
                 openGallery();
@@ -138,18 +147,18 @@ public class CalorieTracker extends AppCompatActivity {
     }
 
     private boolean checkPermission(String permission, int requestCode) {
-        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{permission}, requestCode);
             return false;
         }
         return true;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode != RESULT_OK) return;
+        if (resultCode != requireActivity().RESULT_OK) return;
         if (requestCode == CAMERA_INTENT_REQUEST_CODE && data != null) {
             Bitmap photo = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
             if (photo == null) return;
@@ -174,7 +183,7 @@ public class CalorieTracker extends AppCompatActivity {
         cloudinaryServiceManager.uploadImageFromCamera(bitmap, new CloudinaryServiceManager.CloudinaryUploadCallback() {
             @Override
             public void onSuccess(String imageUrl) {
-                runOnUiThread(() -> {
+                requireActivity().runOnUiThread(() -> {
                     showToast(getString(R.string.image_uploaded) + imageUrl);
                     Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
                 });
@@ -182,7 +191,7 @@ public class CalorieTracker extends AppCompatActivity {
 
             @Override
             public void onError(String errorMessage) {
-                runOnUiThread(() -> {
+                requireActivity().runOnUiThread(() -> {
                     showToast(getString(R.string.upload_error) + errorMessage);
                     Log.e(TAG, "Yükleme hatası: " + errorMessage);
                 });
@@ -198,7 +207,7 @@ public class CalorieTracker extends AppCompatActivity {
         cloudinaryServiceManager.uploadImageFromGallery(imageUri, new CloudinaryServiceManager.CloudinaryUploadCallback() {
             @Override
             public void onSuccess(String imageUrl) {
-                runOnUiThread(() -> {
+                requireActivity().runOnUiThread(() -> {
                     showToast(getString(R.string.image_uploaded) + imageUrl);
                     Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
                 });
@@ -206,7 +215,7 @@ public class CalorieTracker extends AppCompatActivity {
 
             @Override
             public void onError(String errorMessage) {
-                runOnUiThread(() -> {
+                requireActivity().runOnUiThread(() -> {
                     showToast(getString(R.string.upload_error) + errorMessage);
                     Log.e(TAG, "Yükleme hatası: " + errorMessage);
                 });
@@ -234,9 +243,12 @@ public class CalorieTracker extends AppCompatActivity {
     }
 
     private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
-
-
-

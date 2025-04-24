@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <!--Permissions-->
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".application.AICalTrackerApplication"
+        android:name=".features.application.AICalTrackerApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,23 +19,16 @@
         android:theme="@style/Theme.AICALTRACKER"
         tools:targetApi="31">
         <activity
-            android:name=".profile.ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.CalorieTracker"
-            android:exported="true"
-            android:theme="@style/Theme.AICALTRACKER">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".features.drawer.DrawerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_drawer"
+            android:theme="@style/Theme.AICALTRACKER.NoActionBar" />
 
-                <category android:name="android.intent.category.ALTERNATIVE" />
-            </intent-filter>
-        </activity>
         <activity
-            android:name=".EmailPasswordActivity"
+            android:name=".features.auth.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".features.auth.EmailPasswordActivity"
             android:exported="true"
             android:theme="@style/Theme.AICALTRACKER">
             <intent-filter>
