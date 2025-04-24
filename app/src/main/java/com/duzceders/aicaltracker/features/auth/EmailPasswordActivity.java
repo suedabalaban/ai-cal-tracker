@@ -1,4 +1,4 @@
-package com.duzceders.aicaltracker;
+package com.duzceders.aicaltracker.features.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.duzceders.aicaltracker.home.CalorieTracker;
+import com.duzceders.aicaltracker.R;
+import com.duzceders.aicaltracker.features.calorie_tracker.CalorieTracker;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
