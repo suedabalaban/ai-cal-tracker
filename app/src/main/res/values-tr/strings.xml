@@ -112,4 +112,7 @@
 
     <string name="edit_success">Bilgileriniz başarıyla güncellendi.</string>
 
+    <string name="image_uploading">Fotoğraf yükleniyor…</string>
+    <string name="image_uploaded">"Fotoğraf başarıyla yüklendi: "</string>
+    <string name="upload_error">"Yükleme hatası: "</string>
 </resources>

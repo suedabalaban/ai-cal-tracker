@@ -112,4 +112,7 @@
 
 
 
+    <string name="image_uploading">Image is uploading…</string>
+    <string name="image_uploaded">"Image Uploaded Successfully"</string>
+    <string name="upload_error">"Upload Error: "</string>
 </resources>

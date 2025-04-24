@@ -3,6 +3,7 @@ package com.duzceders.aicaltracker.home;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,12 +23,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.profile.ProfileActivity;
+import com.duzceders.aicaltracker.product.service.manager.CloudinaryServiceManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -45,6 +50,7 @@ public class CalorieTracker extends AppCompatActivity implements NavigationView.
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
+    private static final String TAG = "CalorieTracker";
 
     private TextView totalCaloriesValue;
     private TextView totalProteinValue;
@@ -57,6 +63,7 @@ public class CalorieTracker extends AppCompatActivity implements NavigationView.
     private CircularProgressIndicator circularProgressCarbs;
     private CircularProgressIndicator circularProgressFats;
 
+    private CloudinaryServiceManager cloudinaryServiceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,7 @@ public class CalorieTracker extends AppCompatActivity implements NavigationView.
 
         CalorieTrackerViewModel viewModel = new ViewModelProvider(this).get(CalorieTrackerViewModel.class);
 
+        cloudinaryServiceManager = new CloudinaryServiceManager(this);
         initializeViews();
 
         viewModel.getUserData().observe(this, user -> {
@@ -234,20 +242,70 @@ public class CalorieTracker extends AppCompatActivity implements NavigationView.
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK) return;
-
-        if (requestCode == CAMERA_INTENT_REQUEST_CODE) {
-            Log.d("KAMERA", "Fotoğraf çekildi!");
-            Toast.makeText(this, "Fotoğraf başarıyla çekildi", Toast.LENGTH_SHORT).show();
-            return;
+        if (requestCode == CAMERA_INTENT_REQUEST_CODE && data != null) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            if (photo == null) return;
+            Log.d(TAG, "Fotoğraf çekildi!");
+            showToast(getString(R.string.image_uploading));
+            uploadImageToCloudinaryFromCamera(photo);
         }
 
         if (requestCode == GALLERY_INTENT_REQUEST_CODE && data != null) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri == null) return;
+            Log.d(TAG, "Fotoğraf seçildi: " + selectedImageUri);
 
-            Log.d("GALERI", "Fotoğraf seçildi: " + selectedImageUri);
-            Toast.makeText(this, "Galeri fotoğrafı seçildi", Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.image_uploading));
+            uploadImageToCloudinaryFromGallery(selectedImageUri);
         }
+    }
+
+    private void uploadImageToCloudinaryFromCamera(Bitmap bitmap) {
+        if (bitmap == null) {
+            showToast(getString(R.string.upload_error));
+            return;
+        }
+        cloudinaryServiceManager.uploadImageFromCamera(bitmap, new CloudinaryServiceManager.CloudinaryUploadCallback() {
+            @Override
+            public void onSuccess(String imageUrl) {
+                runOnUiThread(() -> {
+                    showToast(getString(R.string.image_uploaded) + imageUrl);
+                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                runOnUiThread(() -> {
+                    showToast(getString(R.string.upload_error) + errorMessage);
+                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
+                });
+            }
+        });
+    }
+
+    private void uploadImageToCloudinaryFromGallery(Uri imageUri) {
+        if (imageUri == null) {
+            showToast(getString(R.string.upload_error));
+            return;
+        }
+        cloudinaryServiceManager.uploadImageFromGallery(imageUri, new CloudinaryServiceManager.CloudinaryUploadCallback() {
+            @Override
+            public void onSuccess(String imageUrl) {
+                runOnUiThread(() -> {
+                    showToast(getString(R.string.image_uploaded) + imageUrl);
+                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                runOnUiThread(() -> {
+                    showToast(getString(R.string.upload_error) + errorMessage);
+                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
+                });
+            }
+        });
     }
 
     @Override
@@ -255,7 +313,7 @@ public class CalorieTracker extends AppCompatActivity implements NavigationView.
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "İzin reddedildi", Toast.LENGTH_SHORT).show();
+            showToast("İzin reddedildi");
             return;
         }
 
@@ -268,4 +326,11 @@ public class CalorieTracker extends AppCompatActivity implements NavigationView.
                 break;
         }
     }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }
+
+
+
