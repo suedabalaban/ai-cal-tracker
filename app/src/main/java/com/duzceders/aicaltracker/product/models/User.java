@@ -11,6 +11,7 @@ public class User {
     private String name;
     private String surname;
     private String email;
+    private String birthdate;
 
     private int height_cm;
     private int weight_kg;
