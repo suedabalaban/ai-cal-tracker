@@ -1,5 +1,7 @@
 package com.duzceders.aicaltracker.home;
 
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,13 +21,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
+import com.duzceders.aicaltracker.ai.AiAnalysisActivity;
 import com.duzceders.aicaltracker.product.models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.FirebaseApp;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class CalorieTracker extends AppCompatActivity {
 
@@ -123,6 +131,7 @@ public class CalorieTracker extends AppCompatActivity {
         startActivityForResult(intent, GALLERY_INTENT_REQUEST_CODE);
     }
 
+
     private void setClickListeners() {
         FloatingActionButton fabMain = findViewById(R.id.fabMain);
         FloatingActionButton fabCamera = findViewById(R.id.fabCamera);
@@ -165,20 +174,54 @@ public class CalorieTracker extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode != RESULT_OK) return;
+        if (resultCode != RESULT_OK || data == null) return;
+
+        Bitmap photo = null;
 
         if (requestCode == CAMERA_INTENT_REQUEST_CODE) {
-            Log.d("KAMERA", "Fotoğraf çekildi!");
-            Toast.makeText(this, "Fotoğraf başarıyla çekildi", Toast.LENGTH_SHORT).show();
-            return;
+            photo = (Bitmap) data.getExtras().get("data");
         }
 
-        if (requestCode == GALLERY_INTENT_REQUEST_CODE && data != null) {
+        if (requestCode == GALLERY_INTENT_REQUEST_CODE) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri == null) return;
 
-            Log.d("GALERI", "Fotoğraf seçildi: " + selectedImageUri);
-            Toast.makeText(this, "Galeri fotoğrafı seçildi", Toast.LENGTH_SHORT).show();
+            try {
+                photo = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                        ? ImageDecoder.decodeBitmap(
+                        ImageDecoder.createSource(this.getContentResolver(), selectedImageUri))
+                        : MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Görsel okunurken hata oluştu", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+
+        if (photo != null) {
+            Uri photoUri = saveBitmapToCache(photo);
+            if (photoUri != null) {
+                Intent intent = new Intent(this, AiAnalysisActivity.class);
+                intent.putExtra("imageUri", photoUri.toString());
+                startActivity(intent);
+            }
+        }
+    }
+
+    private Uri saveBitmapToCache(Bitmap bitmap) {
+        try {
+            File cachePath = new File(getCacheDir(), "images");
+            cachePath.mkdirs();
+            File imageFile = new File(cachePath, "captured.jpg");
+            FileOutputStream stream = new FileOutputStream(imageFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            stream.close();
+
+            return FileProvider.getUriForFile(this, getPackageName() + ".provider", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -202,6 +245,11 @@ public class CalorieTracker extends AppCompatActivity {
         }
     }
 
+    private void goToAiAnalysisActivity(Uri imageUri) {
+        Intent intent = new Intent(this, AiAnalysisActivity.class);
+        intent.putExtra("imageUri", imageUri.toString()); // URI'yi string olarak gönderiyoruz
+        startActivity(intent);
+    }
 
 }
 

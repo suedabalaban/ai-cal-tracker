@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!--Permissions-->
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -17,9 +17,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AICALTRACKER"
         tools:targetApi="31">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
+
+
         <activity
             android:name=".home.CalorieTracker"
             android:exported="true"
@@ -30,6 +44,13 @@
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ai.AiAnalysisActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AICALTRACKER" />
+
+
         <activity
             android:name=".EmailPasswordActivity"
             android:exported="true"
