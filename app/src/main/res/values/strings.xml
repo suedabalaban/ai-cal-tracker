@@ -79,4 +79,7 @@
     <string name="personal_info">Tell us about yourself</string>
     <string name="body_fat">Body Fat</string>
     <string name="welcome">Welcome, %s</string>
+    <string name="image_uploading">Image is uploading…</string>
+    <string name="image_uploaded">"Image Uploaded Successfully"</string>
+    <string name="upload_error">"Upload Error: "</string>
 </resources>

@@ -1,28 +1,28 @@
 package com.duzceders.aicaltracker.home;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.provider.MediaStore;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.service.manager.CloudinaryServiceManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.FirebaseApp;
@@ -33,7 +33,7 @@ public class CalorieTracker extends AppCompatActivity {
     private static final int CAMERA_INTENT_REQUEST_CODE = 101;
     private static final int GALLERY_PERMISSION_REQUEST_CODE = 102;
     private static final int GALLERY_INTENT_REQUEST_CODE = 103;
-
+    private static final String TAG = "CalorieTracker";
 
     private TextView totalCaloriesValue;
     private TextView totalProteinValue;
@@ -46,6 +46,7 @@ public class CalorieTracker extends AppCompatActivity {
     private CircularProgressIndicator circularProgressCarbs;
     private CircularProgressIndicator circularProgressFats;
 
+    private CloudinaryServiceManager cloudinaryServiceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class CalorieTracker extends AppCompatActivity {
 
         CalorieTrackerViewModel viewModel = new ViewModelProvider(this).get(CalorieTrackerViewModel.class);
 
+        cloudinaryServiceManager = new CloudinaryServiceManager(this);
         initializeViews();
 
         viewModel.getUserData().observe(this, user -> {
@@ -64,10 +66,7 @@ public class CalorieTracker extends AppCompatActivity {
                 Toast.makeText(this, "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
             }
         });
-
-
         setClickListeners();
-
     }
 
     private void updateUiWithUserData(User user) {
@@ -104,7 +103,6 @@ public class CalorieTracker extends AppCompatActivity {
         circularProgressCarbs = findViewById(R.id.circularProgressCarbs);
         circularProgressFats = findViewById(R.id.circularProgressFats);
     }
-
 
     private int calculateProgress(double left, double target) {
         return (int) (((float) (target - left) / target) * 100);
@@ -166,22 +164,69 @@ public class CalorieTracker extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK) return;
-
-        if (requestCode == CAMERA_INTENT_REQUEST_CODE) {
-            Log.d("KAMERA", "Fotoğraf çekildi!");
-            Toast.makeText(this, "Fotoğraf başarıyla çekildi", Toast.LENGTH_SHORT).show();
-            return;
+        if (requestCode == CAMERA_INTENT_REQUEST_CODE && data != null) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            if (photo == null) return;
+            Log.d(TAG, "Fotoğraf çekildi!");
+            Toast.makeText(this, R.string.image_uploading, Toast.LENGTH_SHORT).show();
+            uploadImageToCloudinaryFromCamera(photo);
         }
 
         if (requestCode == GALLERY_INTENT_REQUEST_CODE && data != null) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri == null) return;
-
-            Log.d("GALERI", "Fotoğraf seçildi: " + selectedImageUri);
-            Toast.makeText(this, "Galeri fotoğrafı seçildi", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Fotoğraf seçildi: " + selectedImageUri);
+            Toast.makeText(this, R.string.image_uploading, Toast.LENGTH_SHORT).show();
+            uploadImageToCloudinaryFromGallery(selectedImageUri);
         }
     }
 
+    private void uploadImageToCloudinaryFromCamera(Bitmap bitmap) {
+        if (bitmap == null) {
+            Toast.makeText(this, "Fotoğraf yüklenemedi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        cloudinaryServiceManager.uploadImageFromCamera(bitmap, new CloudinaryServiceManager.CloudinaryUploadCallback() {
+            @Override
+            public void onSuccess(String imageUrl) {
+                runOnUiThread(() -> {
+                    Toast.makeText(CalorieTracker.this, getString(R.string.image_uploaded) + imageUrl, Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
+                });
+            }
+            @Override
+            public void onError(String errorMessage) {
+                runOnUiThread(() -> {
+                    Toast.makeText(CalorieTracker.this, getString(R.string.upload_error) + errorMessage, Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
+                });
+            }
+        });
+    }
+
+    private void uploadImageToCloudinaryFromGallery(Uri imageUri) {
+        if (imageUri == null) {
+            Toast.makeText(this, getString(R.string.upload_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        cloudinaryServiceManager.uploadImageFromGallery(imageUri, new CloudinaryServiceManager.CloudinaryUploadCallback() {
+            @Override
+            public void onSuccess(String imageUrl) {
+                runOnUiThread(() -> {
+                    Toast.makeText(CalorieTracker.this, getString(R.string.image_uploaded) + imageUrl, Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                runOnUiThread(() -> {
+                    Toast.makeText(CalorieTracker.this, getString(R.string.upload_error) + errorMessage, Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
+                });
+            }
+        });
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -201,8 +246,6 @@ public class CalorieTracker extends AppCompatActivity {
                 break;
         }
     }
-
-
 }
 
 

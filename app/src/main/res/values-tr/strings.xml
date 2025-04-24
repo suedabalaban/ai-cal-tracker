@@ -79,4 +79,7 @@
     <string name="personal_info">Kendinizden bahsedin</string>
     <string name="body_fat">Yağ Oranı</string>
     <string name="welcome">Hoş Geldin, %s</string>
+    <string name="image_uploading">Fotoğraf yükleniyor…</string>
+    <string name="image_uploaded">"Fotoğraf başarıyla yüklendi: "</string>
+    <string name="upload_error">"Yükleme hatası: "</string>
 </resources>
