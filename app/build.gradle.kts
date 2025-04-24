@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth)
+    implementation(libs.activity)
     compileOnly (libs.lombok)
     annotationProcessor (libs.lombok)
     implementation(libs.appcompat)
@@ -49,7 +50,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
 
     implementation(libs.firebase.firestore)
     implementation(libs.google.firebase.storage)

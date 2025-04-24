@@ -63,7 +63,7 @@
     <string name="gender">Cinsiyet</string>
     <string name="male">Erkek</string>
     <string name="female">Kadın</string>
-    <string name="age">Yaş</string>
+    <string name="birthdate">Doğum Tarihi</string>
     <string name="height">Boy</string>
     <string name="weight">Kilo</string>
     <string name="activity_level">Aktivite Seviyesi</string>
@@ -78,5 +78,28 @@
     <string name="back">Geri</string>
     <string name="personal_info">Kendinizden bahsedin</string>
     <string name="body_fat">Yağ Oranı</string>
-    <string name="welcome">Hoş Geldin, %s</string>
+    <string name="welcome">Hoş Geldiniz</string>
+    <string name="all_fields_required">Lütfen tüm alanları doldurun.</string>
+    <string name="invalid_number_input">Lütfen geçerli sayısal değerler girin.</string>
+    <string name="please_select_gender">Lütfen bir cinsiyet seçin.</string>
+    <string name="please_select_activity">Lütfen bir aktivite seviyesi seçin.</string>
+    <string name="invalid_birthdate_format">Doğum tarihi formatı geçersiz (gg.aa.yyyy)</string>
+    <string name="invalid_weight">Kilo 0 ile 200 arasında olmalı</string>
+    <string name="invalid_height">Boy 0 ile 230 arasında olmalı</string>
+    <string name="invalid_body_fat">Vücut yağ oranı 0–100 aralığında olmalı</string>
+    <string name="birthdate_required">Doğum tarihi gereklidir.</string>
+    <string name="invalid_birthdate">Geçersiz doğum tarihi formatı. Lütfen dd-mm-yyyy formatını kullanın.</string>
+    <string name="weight_required">Kilo gereklidir.</string>
+    <string name="height_required">Boy gereklidir.</string>
+    <string name="body_fat_required">Vücut yağı yüzdesi gereklidir.</string>
+    <string name="gender_required">Cinsiyet seçimi gereklidir.</string>
+    <string name="name_required">İsim gerekli</string>
+    <string name="surname_required">Soyisim gerekli</string>
+    <string name="email_required">E-posta gerekli</string>
+    <string name="password_required">Şifre gerekli</string>
+    <string name="invalid_name">Geçerli bir isim girin</string>
+    <string name="invalid_surname">Geçerli bir soyisim girin</string>
+    <string name="invalid_email">Geçerli bir e-posta adresi girin</string>
+    <string name="password_too_short">Şifre en az 6 karakter olmalı</string>
+
 </resources>
