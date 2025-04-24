@@ -86,7 +86,6 @@
     <string name="back">Geri</string>
     <string name="personal_info">Kendinizden bahsedin</string>
     <string name="body_fat">Yağ Oranı</string>
-    <string name="welcome">Hoş Geldiniz</string>
     <string name="all_fields_required">Lütfen tüm alanları doldurun.</string>
     <string name="invalid_number_input">Lütfen geçerli sayısal değerler girin.</string>
     <string name="please_select_gender">Lütfen bir cinsiyet seçin.</string>
