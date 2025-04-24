@@ -168,7 +168,7 @@ public class CalorieTracker extends AppCompatActivity {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             if (photo == null) return;
             Log.d(TAG, "Fotoğraf çekildi!");
-            Toast.makeText(this, R.string.image_uploading, Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.image_uploading));
             uploadImageToCloudinaryFromCamera(photo);
         }
 
@@ -176,28 +176,30 @@ public class CalorieTracker extends AppCompatActivity {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri == null) return;
             Log.d(TAG, "Fotoğraf seçildi: " + selectedImageUri);
-            Toast.makeText(this, R.string.image_uploading, Toast.LENGTH_SHORT).show();
+
+            showToast(getString(R.string.image_uploading));
             uploadImageToCloudinaryFromGallery(selectedImageUri);
         }
     }
 
     private void uploadImageToCloudinaryFromCamera(Bitmap bitmap) {
         if (bitmap == null) {
-            Toast.makeText(this, "Fotoğraf yüklenemedi", Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.upload_error));
             return;
         }
         cloudinaryServiceManager.uploadImageFromCamera(bitmap, new CloudinaryServiceManager.CloudinaryUploadCallback() {
             @Override
             public void onSuccess(String imageUrl) {
                 runOnUiThread(() -> {
-                    Toast.makeText(CalorieTracker.this, getString(R.string.image_uploaded) + imageUrl, Toast.LENGTH_LONG).show();
+                    showToast(getString(R.string.image_uploaded) + imageUrl);
                     Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
                 });
             }
+
             @Override
             public void onError(String errorMessage) {
                 runOnUiThread(() -> {
-                    Toast.makeText(CalorieTracker.this, getString(R.string.upload_error) + errorMessage, Toast.LENGTH_LONG).show();
+                    showToast(getString(R.string.upload_error) + errorMessage);
                     Log.e(TAG, "Yükleme hatası: " + errorMessage);
                 });
             }
@@ -206,14 +208,14 @@ public class CalorieTracker extends AppCompatActivity {
 
     private void uploadImageToCloudinaryFromGallery(Uri imageUri) {
         if (imageUri == null) {
-            Toast.makeText(this, getString(R.string.upload_error), Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.upload_error));
             return;
         }
         cloudinaryServiceManager.uploadImageFromGallery(imageUri, new CloudinaryServiceManager.CloudinaryUploadCallback() {
             @Override
             public void onSuccess(String imageUrl) {
                 runOnUiThread(() -> {
-                    Toast.makeText(CalorieTracker.this, getString(R.string.image_uploaded) + imageUrl, Toast.LENGTH_LONG).show();
+                    showToast(getString(R.string.image_uploaded) + imageUrl);
                     Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
                 });
             }
@@ -221,7 +223,7 @@ public class CalorieTracker extends AppCompatActivity {
             @Override
             public void onError(String errorMessage) {
                 runOnUiThread(() -> {
-                    Toast.makeText(CalorieTracker.this, getString(R.string.upload_error) + errorMessage, Toast.LENGTH_LONG).show();
+                    showToast(getString(R.string.upload_error) + errorMessage);
                     Log.e(TAG, "Yükleme hatası: " + errorMessage);
                 });
             }
@@ -233,7 +235,7 @@ public class CalorieTracker extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "İzin reddedildi", Toast.LENGTH_SHORT).show();
+            showToast("İzin reddedildi");
             return;
         }
 
@@ -245,6 +247,10 @@ public class CalorieTracker extends AppCompatActivity {
                 openGallery();
                 break;
         }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
 
