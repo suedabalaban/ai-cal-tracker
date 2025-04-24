@@ -31,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class CalorieTrackerFragment extends Fragment {
 
@@ -137,8 +138,7 @@ public class CalorieTrackerFragment extends Fragment {
         });
 
         fabGallery.setOnClickListener(v -> {
-            String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ?
-                    Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
+            String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ? Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
 
             if (checkPermission(permission, GALLERY_PERMISSION_REQUEST_CODE)) {
                 openGallery();
@@ -180,6 +180,7 @@ public class CalorieTrackerFragment extends Fragment {
             showToast(getString(R.string.upload_error));
             return;
         }
+        String mealId = UUID.randomUUID().toString();
         cloudinaryServiceManager.uploadImageFromCamera(bitmap, new CloudinaryServiceManager.CloudinaryUploadCallback() {
             @Override
             public void onSuccess(String imageUrl) {
@@ -196,7 +197,7 @@ public class CalorieTrackerFragment extends Fragment {
                     Log.e(TAG, "Yükleme hatası: " + errorMessage);
                 });
             }
-        });
+        }, mealId);
     }
 
     private void uploadImageToCloudinaryFromGallery(Uri imageUri) {
@@ -204,6 +205,7 @@ public class CalorieTrackerFragment extends Fragment {
             showToast(getString(R.string.upload_error));
             return;
         }
+        String mealId = UUID.randomUUID().toString();
         cloudinaryServiceManager.uploadImageFromGallery(imageUri, new CloudinaryServiceManager.CloudinaryUploadCallback() {
             @Override
             public void onSuccess(String imageUrl) {
@@ -220,7 +222,7 @@ public class CalorieTrackerFragment extends Fragment {
                     Log.e(TAG, "Yükleme hatası: " + errorMessage);
                 });
             }
-        });
+        }, mealId);
     }
 
     @Override
