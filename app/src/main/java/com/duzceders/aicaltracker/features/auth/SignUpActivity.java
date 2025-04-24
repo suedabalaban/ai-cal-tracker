@@ -4,20 +4,36 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.duzceders.aicaltracker.R;
+import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.ActivityLevel;
+import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private int currentStep = 1; // Track current step
+    private String email, password, gender;
+    private EditText emailEditText, passwordEditText, nameEditText, surnameEditText,
+            birthdateEditText , weightEditText, heightEditText, bodyFatEditText;
+    private Button nextButton;
+    ActivityLevel level;
+    private FirebaseRepository firebaseRepository;
+    private User user = new User();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadStep(currentStep);
+        firebaseRepository = new FirebaseRepository();
     }
 
     private void loadStep(int step) {
@@ -40,26 +56,143 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void setupStep1Components() {
-        // Next button
-        Button nextButton = findViewById(R.id.nextButton);
-        nextButton.setOnClickListener(v -> loadStep(2));
+        nameEditText = findViewById(R.id.nameEditText);
+        surnameEditText = findViewById(R.id.surnameEditText);
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        nextButton = findViewById(R.id.nextButton);
 
-        // Back button (will just finish the activity on step 1)
+        nextButton.setOnClickListener(v -> {
+            String name = nameEditText.getText().toString().trim();
+            String surname = surnameEditText.getText().toString().trim();
+            String emailInput = emailEditText.getText().toString().trim();
+            String passwordInput = passwordEditText.getText().toString().trim();
+
+            boolean isValid = true;
+
+            // Validate name
+            if (name.isEmpty() || !isAlpha(name)) {
+                nameEditText.setError(name.isEmpty() ? getString(R.string.name_required) : getString(R.string.invalid_name));
+                isValid = false;
+            } else {
+                nameEditText.setError(null);
+            }
+
+            // Validate surname
+            if (surname.isEmpty() || !isAlpha(surname)) {
+                surnameEditText.setError(surname.isEmpty() ? getString(R.string.surname_required) : getString(R.string.invalid_surname));
+                isValid = false;
+            } else {
+                surnameEditText.setError(null);
+            }
+
+            // Validate email
+            if (emailInput.isEmpty() || !isValidEmail(emailInput)) {
+                emailEditText.setError(emailInput.isEmpty() ? getString(R.string.email_required) : getString(R.string.invalid_email));
+                isValid = false;
+            } else {
+                emailEditText.setError(null);
+            }
+
+            // Validate password
+            if (passwordInput.isEmpty() || passwordInput.length() < 6) {
+                passwordEditText.setError(passwordInput.isEmpty() ? getString(R.string.password_required) : getString(R.string.password_too_short));
+                isValid = false;
+            } else {
+                passwordEditText.setError(null);
+            }
+
+            // If all valid, proceed to next step
+            if (!isValid) return;
+
+            user.setName(name);
+            user.setSurname(surname);
+            user.setEmail(emailInput);
+            this.email = emailInput;
+            this.password = passwordInput;
+
+            currentStep = 2;
+            loadStep(currentStep);
+        });
+
         View backButton = findViewById(R.id.backButton);
         if (backButton != null) {
             backButton.setOnClickListener(v -> finish());
         }
 
-        // Sign in prompt
         setupSignInPrompt();
     }
 
     private void setupStep2Components() {
-        // Next button
-        Button nextButton = findViewById(R.id.nextButton);
-        nextButton.setOnClickListener(v -> loadStep(3));
+        birthdateEditText = findViewById(R.id.birthdateEditText);
+        weightEditText = findViewById(R.id.weightEditText);
+        heightEditText = findViewById(R.id.heightEditText);
+        bodyFatEditText = findViewById(R.id.bodyFatEditText);
+        RadioGroup genderGroup = findViewById(R.id.genderGroup);
+        nextButton = findViewById(R.id.nextButton);
 
-        // Back button (goes back to step 1)
+        nextButton.setOnClickListener(v -> {
+            String birthdateInput = birthdateEditText.getText().toString().trim();
+            String weightInput = weightEditText.getText().toString().trim();
+            String heightInput = heightEditText.getText().toString().trim();
+            String bodyFatInput = bodyFatEditText.getText().toString().trim();
+
+            boolean isValid = true;
+
+            // Validate birthdate (dd-mm-yyyy format)
+            if (birthdateInput.isEmpty() || !birthdateInput.matches("\\d{2}-\\d{2}-\\d{4}")) {
+                birthdateEditText.setError(birthdateInput.isEmpty() ? getString(R.string.birthdate_required) : getString(R.string.invalid_birthdate));
+                isValid = false;
+            } else {
+                birthdateEditText.setError(null);
+            }
+
+            // Validate weight
+            if (weightInput.isEmpty() || Integer.parseInt(weightInput) <= 0 || Integer.parseInt(weightInput) > 200) {
+                weightEditText.setError(weightInput.isEmpty() ? getString(R.string.weight_required) : getString(R.string.invalid_weight));
+                isValid = false;
+            } else {
+                weightEditText.setError(null);
+            }
+
+            // Validate height
+            if (heightInput.isEmpty() || Integer.parseInt(heightInput) <= 0 || Integer.parseInt(heightInput) > 230) {
+                heightEditText.setError(heightInput.isEmpty() ? getString(R.string.height_required) : getString(R.string.invalid_height));
+                isValid = false;
+            } else {
+                heightEditText.setError(null);
+            }
+
+            // Validate body fat percentage
+            if (bodyFatInput.isEmpty() || Double.parseDouble(bodyFatInput) < 0 || Double.parseDouble(bodyFatInput) > 100) {
+                bodyFatEditText.setError(bodyFatInput.isEmpty() ? getString(R.string.body_fat_required) : getString(R.string.invalid_body_fat));
+                isValid = false;
+            } else {
+                bodyFatEditText.setError(null);
+            }
+
+            // Validate gender selection
+            int selectedGenderId = genderGroup.getCheckedRadioButtonId();
+            if (selectedGenderId == -1) {
+                Toast.makeText(this, getString(R.string.gender_required), Toast.LENGTH_SHORT).show();
+                isValid = false;
+            }
+
+            // If all valid, proceed to next step
+            if (!isValid) return;
+
+            user.setBirthday(birthdateInput);
+            user.setWeight_kg(Integer.parseInt(weightInput));
+            user.setHeight_cm(Integer.parseInt(heightInput));
+            user.setBody_fat_percent(Double.parseDouble(bodyFatInput));
+
+            String gender = selectedGenderId == R.id.radioMale ? "Male" : selectedGenderId == R.id.radioFemale ? "Female" : "Unspecified";
+            user.setGender(gender);
+
+            currentStep = 3;
+            loadStep(currentStep);
+        });
+
         View backButton = findViewById(R.id.backButton);
         if (backButton != null) {
             backButton.setOnClickListener(v -> {
@@ -68,14 +201,33 @@ public class SignUpActivity extends AppCompatActivity {
             });
         }
 
-        // Sign in prompt
         setupSignInPrompt();
     }
 
     private void setupStep3Components() {
+        RadioGroup activityGroup = findViewById(R.id.activityLevelGroup);
+
         // Confirm button
         Button confirmButton = findViewById(R.id.confirmButton);
-        confirmButton.setOnClickListener(v -> finishSignup());
+        confirmButton.setOnClickListener(v -> {
+            int selectedId = activityGroup.getCheckedRadioButtonId();
+
+            if (selectedId == R.id.radioNoActivity) {
+                level = ActivityLevel.NO_ACTIVITY;
+            } else if (selectedId == R.id.radioLowActivity) {
+                level = ActivityLevel.LOW_ACTIVITY;
+            } else if (selectedId == R.id.radioActive) {
+                level = ActivityLevel.ACTIVE;
+            } else if (selectedId == R.id.radioVeryActive) {
+                level = ActivityLevel.VERY_ACTIVE;;
+            }else{
+                Toast.makeText(this, getString(R.string.please_select_activity), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            user.setActivity_level(level);
+            finishSignup();
+        });
 
         // Sign in prompt (no back button on this step)
         setupSignInPrompt();
@@ -93,7 +245,26 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void finishSignup() {
-        // Handle final signup logic, such as saving user data
-        finish(); // Close the activity after signup
+        firebaseRepository.signUp(email, password, new FirebaseRepository.OnAuthResultListener() {
+            @Override
+            public void onSuccess() {
+                firebaseRepository.addUser(user);
+                Intent intent = new Intent(SignUpActivity.this, EmailPasswordActivity.class);
+                startActivity(intent);
+                finish(); // close signup activity
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(SignUpActivity.this, "Sign up failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private boolean isAlpha(String input) {
+        return input.matches("^[a-zA-ZçÇğĞıİöÖşŞüÜ\\s]+$");
+    }
+
+    private boolean isValidEmail(String input) {
+        return input.matches("^\\S+@\\S+\\.\\S+$");
     }
 }
