@@ -1,5 +1,5 @@
 package com.duzceders.aicaltracker.product.models.enums;
 
 public enum ActivityLevel {
-    SEDENTARY, LIGHT, MODERATE, ACTIVE, VERY_ACTIVE
+    NO_ACTIVITY, LOW_ACTIVITY, ACTIVE, VERY_ACTIVE
 }

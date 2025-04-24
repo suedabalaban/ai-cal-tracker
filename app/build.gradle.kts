@@ -73,11 +73,11 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
 
     implementation(libs.firebase.firestore)
     implementation(libs.google.firebase.storage)
-    
+
+ 
     // Retrofit ve Cloudinary bağımlılıkları
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
