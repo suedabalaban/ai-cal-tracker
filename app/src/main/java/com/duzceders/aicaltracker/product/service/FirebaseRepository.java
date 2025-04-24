@@ -1,5 +1,6 @@
 package com.duzceders.aicaltracker.product.service;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.manager.FirebaseServiceManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,7 +32,7 @@ public class FirebaseRepository {
     }
 
     /// Gets current user's uid if its null returns null
-    private String getCurrentUserId() {
+    public String getCurrentUserId() {
         FirebaseUser user = auth.getCurrentUser();
         return user != null ? user.getUid() : null;
     }
@@ -109,4 +111,36 @@ public class FirebaseRepository {
                 });
         return userLiveData;
     }
+
+    //authentication methods
+
+    public void signIn(String email, String password, Context context, OnAuthResultListener listener) {
+        FirebaseAuth.getInstance()
+                .signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    listener.onFailure(e.getMessage());
+                });
+    }
+
+
+    public void signUp(String email, String password, OnAuthResultListener listener) {
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    listener.onFailure(e.getMessage());
+                });
+    }
+    public interface OnAuthResultListener {
+        void onSuccess();
+        void onFailure(String errorMessage);
+    }
+    public void signOut() {
+        auth.signOut();  // FirebaseServiceManager'dan gelen auth objesi üzerinden
+    }
+
 }
