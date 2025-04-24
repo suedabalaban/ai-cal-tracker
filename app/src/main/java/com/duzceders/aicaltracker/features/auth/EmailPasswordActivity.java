@@ -1,27 +1,21 @@
-package com.duzceders.aicaltracker;
+package com.duzceders.aicaltracker.features.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.duzceders.aicaltracker.home.CalorieTracker;
+import com.duzceders.aicaltracker.R;
+import com.duzceders.aicaltracker.features.drawer.DrawerActivity;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class EmailPasswordActivity extends AppCompatActivity {
 
@@ -94,7 +88,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
                 firebaseRepository.signIn(email, password, EmailPasswordActivity.this, new FirebaseRepository.OnAuthResultListener() {
                     @Override
                     public void onSuccess() {
-                        startActivity(new Intent(EmailPasswordActivity.this, CalorieTracker.class));
+                        startActivity(new Intent(EmailPasswordActivity.this, DrawerActivity.class));
                         finish();
                         Toast.makeText(EmailPasswordActivity.this, "Log in successful ", Toast.LENGTH_SHORT).show();
                     }
@@ -138,7 +132,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
 
 
     public void navigateToMainActivity() {
-        Intent intent = new Intent(EmailPasswordActivity.this, CalorieTracker.class);
+        Intent intent = new Intent(EmailPasswordActivity.this, DrawerActivity.class);
         startActivity(intent);
         finish();
     }

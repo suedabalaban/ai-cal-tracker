@@ -1,4 +1,4 @@
-package com.duzceders.aicaltracker;
+package com.duzceders.aicaltracker.features.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.models.enums.ActivityLevel;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;

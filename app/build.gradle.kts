@@ -62,6 +62,9 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth)
     implementation(libs.activity)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.legacy.support.v4)
     compileOnly (libs.lombok)
     annotationProcessor (libs.lombok)
     implementation(libs.appcompat)
@@ -84,4 +87,9 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.okhttp.logging)
     implementation(libs.cloudinary)
+
+    // Navigation and Drawer
+    implementation (libs.navigation.fragment.v277)
+    implementation (libs.navigation.ui.v277)
+    implementation (libs.material)
 }

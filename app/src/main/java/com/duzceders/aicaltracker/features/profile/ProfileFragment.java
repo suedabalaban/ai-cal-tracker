@@ -1,38 +1,46 @@
-package com.duzceders.aicaltracker.profile;
+package com.duzceders.aicaltracker.features.profile;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
-import com.duzceders.aicaltracker.databinding.ActivityProfileBinding;
+import com.duzceders.aicaltracker.databinding.FragmentProfileBinding;
 import com.duzceders.aicaltracker.product.models.User;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileFragment extends Fragment {
 
-    private ActivityProfileBinding binding;
+    private FragmentProfileBinding binding;
     private ProfileViewModel viewModel;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityProfileBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-
         observeUserData();
     }
 
     private void observeUserData() {
-        viewModel.getUserData().observe(this, user -> {
+        viewModel.getUserData().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
                 updateUiWithUserData(user);
             } else {
-                Toast.makeText(this, "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -45,26 +53,23 @@ public class ProfileActivity extends AppCompatActivity {
         setCalorieGoals(user);
         setProgressBars(user);
         setClickableTexts(user);
-
     }
 
-
     private void setClickableTexts(User user) {
-        ///Splash effect
         binding.tvHeight.setBackgroundResource(R.drawable.clickable_background);
         binding.tvWeight.setBackgroundResource(R.drawable.clickable_background);
         binding.tvBodyFat.setBackgroundResource(R.drawable.clickable_background);
 
         binding.tvHeight.setOnClickListener(v -> {
-
+            // Height click action
         });
 
         binding.tvWeight.setOnClickListener(v -> {
-
+            // Weight click action
         });
 
         binding.tvBodyFat.setOnClickListener(v -> {
-
+            // Body fat click action
         });
     }
 
@@ -83,9 +88,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setAllMacros(User user) {
         setMacro(binding.tvTotalCarbs, binding.tvCarbsEaten, (int) user.getDaily_macros().getDaily_carbs_need_g(), (int) user.getDaily_macros().getDaily_carbs_left_g());
-
         setMacro(binding.tvTotalProteins, binding.tvProteinsEaten, (int) user.getDaily_macros().getDaily_proteins_need_g(), (int) user.getDaily_macros().getDaily_proteins_left_g());
-
         setMacro(binding.tvTotalFats, binding.tvFatsEaten, (int) user.getDaily_macros().getDaily_fats_need_g(), (int) user.getDaily_macros().getDaily_fats_left_g());
     }
 
@@ -111,7 +114,6 @@ public class ProfileActivity extends AppCompatActivity {
         textView.setText(getString(formatResId, value));
     }
 
-
     private void setTvNumber(TextView textView, Object value) {
         textView.setText(String.valueOf(value));
     }
@@ -126,5 +128,4 @@ public class ProfileActivity extends AppCompatActivity {
         binding.progressCarbs.setProgress(calculateProgress(user.getDaily_macros().getDaily_carbs_left_g(), user.getDaily_macros().getDaily_carbs_need_g()));
         binding.progressFats.setProgress(calculateProgress(user.getDaily_macros().getDaily_fats_left_g(), user.getDaily_macros().getDaily_fats_need_g()));
     }
-
 }

@@ -1,4 +1,4 @@
-package com.duzceders.aicaltracker.profile;
+package com.duzceders.aicaltracker.features.profile;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;

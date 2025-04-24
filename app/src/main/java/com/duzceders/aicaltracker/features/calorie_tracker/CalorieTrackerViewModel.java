@@ -1,4 +1,4 @@
-package com.duzceders.aicaltracker.home;
+package com.duzceders.aicaltracker.features.calorie_tracker;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
