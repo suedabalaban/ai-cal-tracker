@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.duzceders.aicaltracker.R;
-import com.duzceders.aicaltracker.features.calorie_tracker.CalorieTracker;
+import com.duzceders.aicaltracker.features.drawer.DrawerActivity;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -168,7 +168,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
     }
 
     private void navigateToMainActivity() {
-        Intent intent = new Intent(EmailPasswordActivity.this, CalorieTracker.class);
+        Intent intent = new Intent(EmailPasswordActivity.this, DrawerActivity.class);
         startActivity(intent);
         finish();
     }
