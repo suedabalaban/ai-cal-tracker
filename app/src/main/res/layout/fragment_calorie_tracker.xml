@@ -1,26 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.CalorieTracker">
-
-
-    <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
-        android:text="@string/app_name"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    tools:context=".features.calorie_tracker.CalorieTrackerFragment">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewCalories"
@@ -33,7 +19,7 @@
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeText">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -270,7 +256,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    app:indicatorColor="#2196F3"
+                    app:indicatorColor="#4CAF50"
                     app:indicatorSize="60dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -287,7 +273,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/circularProgressFats"
                     app:layout_constraintStart_toStartOf="@+id/circularProgressFats"
                     app:layout_constraintTop_toTopOf="@+id/circularProgressFats"
-                    app:srcCompat="@drawable/ic_water_drop"
+                    app:srcCompat="@drawable/ic_fat_drop"
                     tools:ignore="ContentDescription" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -343,7 +329,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Galeri FAB -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabGallery"
             android:layout_width="wrap_content"
@@ -357,7 +342,6 @@
             app:tint="#000000"
             app:srcCompat="@drawable/ic_gallery" />
 
-        <!-- Kamera FAB -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabCamera"
             android:layout_width="wrap_content"
@@ -371,7 +355,6 @@
             app:tint="#000000"
             app:srcCompat="@drawable/ic_camera" />
 
-        <!-- Ana FAB (artı butonu) -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabMain"
             android:layout_width="wrap_content"
@@ -382,9 +365,6 @@
             app:tint="#FFFFFF"
             app:srcCompat="@drawable/ic_add" />
     </FrameLayout>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
