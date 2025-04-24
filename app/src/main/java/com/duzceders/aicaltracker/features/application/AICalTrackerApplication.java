@@ -1,4 +1,4 @@
-package com.duzceders.aicaltracker.application;
+package com.duzceders.aicaltracker.features.application;
 
 import android.app.Application;
 

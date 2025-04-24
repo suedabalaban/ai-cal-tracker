@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.legacy.support.v4)
     compileOnly (libs.lombok)
     annotationProcessor (libs.lombok)
     implementation(libs.appcompat)
