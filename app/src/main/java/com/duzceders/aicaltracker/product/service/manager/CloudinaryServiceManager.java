@@ -10,6 +10,7 @@ import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.duzceders.aicaltracker.BuildConfig;
 import com.duzceders.aicaltracker.product.config.CloudinaryConfig;
+import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,9 +22,11 @@ import java.util.UUID;
 public class CloudinaryServiceManager {
     private static final String TAG = "CloudinaryServiceMgr";
     private Context context;
+    private FirebaseRepository firebaseRepository = new FirebaseRepository();
 
     public interface CloudinaryUploadCallback {
         void onSuccess(String imageUrl);
+
         void onError(String errorMessage);
     }
 
@@ -35,10 +38,11 @@ public class CloudinaryServiceManager {
     }
 
 
-    public void uploadImageFromCamera(Bitmap bitmap, CloudinaryUploadCallback callback) {
+    public void uploadImageFromCamera(Bitmap bitmap, CloudinaryUploadCallback callback, String mealID) {
         try {
+            String userId = firebaseRepository.getCurrentUserId();
             // Bitmap'i geçici bir dosyaya dönüştür
-            String filename = "image_" + UUID.randomUUID().toString() + ".jpg";
+            String filename = "image_" + userId + "_" + mealID + ".jpg";
             File outputDir = context.getCacheDir();
             File outputFile = new File(outputDir, filename);
 
@@ -48,7 +52,7 @@ public class CloudinaryServiceManager {
             out.close();
 
             // Dosyayı Cloudinary'e yükle
-            uploadFile(outputFile, callback);
+            uploadFile(outputFile, callback, mealID);
         } catch (IOException e) {
             Log.e(TAG, "Error saving camera image", e);
             callback.onError("Kamera görüntüsü kaydedilemedi: " + e.getMessage());
@@ -56,15 +60,17 @@ public class CloudinaryServiceManager {
     }
 
     // Galeriden seçilen bir resmi Cloudinary'e yükler
-    public void uploadImageFromGallery(Uri imageUri, CloudinaryUploadCallback callback) {
-        uploadUri(imageUri, callback);
+    public void uploadImageFromGallery(Uri imageUri, CloudinaryUploadCallback callback, String mealID) {
+        uploadUri(imageUri, callback,mealID);
     }
 
-    private void uploadFile(File file, final CloudinaryUploadCallback callback) {
+    private void uploadFile(File file, final CloudinaryUploadCallback callback, String mealId) {
+        String userId = firebaseRepository.getCurrentUserId();
         // 1. Yöntem: Unsigned upload (Upload preset gerektirir)
         try {
             String requestId = MediaManager.get().upload(file.getAbsolutePath())
                     .unsigned("my_preset") // Cloudinary konsolundan oluşturduğunuz preset adını buraya yazın
+                    .option("public_id", "user_images/" + userId + "/" + mealId)
                     .callback(new UploadCallback() {
                         @Override
                         public void onStart(String requestId) {
@@ -87,9 +93,9 @@ public class CloudinaryServiceManager {
                         @Override
                         public void onError(String requestId, ErrorInfo error) {
                             Log.e(TAG, "Upload error: " + error.getDescription());
-                            
+
                             // Unsigned upload başarısız olursa signed upload deneyelim
-                            uploadFileSigned(file, callback);
+                            uploadFileSigned(file, callback, mealId);
                         }
 
                         @Override
@@ -101,18 +107,20 @@ public class CloudinaryServiceManager {
         } catch (Exception e) {
             Log.e(TAG, "Unsigned upload exception", e);
             // Hata durumunda signed upload deneyelim
-            uploadFileSigned(file, callback);
+            uploadFileSigned(file, callback,mealId);
         }
     }
 
     // İmzalı (signed) yükleme metodu - Upload preset gerektirmez
-    private void uploadFileSigned(File file, final CloudinaryUploadCallback callback) {
+    private void uploadFileSigned(File file, final CloudinaryUploadCallback callback,String mealId) {
         try {
+            String userId = firebaseRepository.getCurrentUserId();
             Map<String, Object> options = new HashMap<>();
             options.put("public_id", "app_upload_" + UUID.randomUUID().toString());
-            
+
             String requestId = MediaManager.get().upload(file.getAbsolutePath())
                     .option("api_key", BuildConfig.CLOUDINARY_API_KEY)
+                    .option("public_id", "user_images/" + userId + "/" + mealId)
                     .options(options)
                     .callback(new UploadCallback() {
                         @Override
@@ -151,11 +159,13 @@ public class CloudinaryServiceManager {
         }
     }
 
-    private void uploadUri(Uri uri, final CloudinaryUploadCallback callback) {
+    private void uploadUri(Uri uri, final CloudinaryUploadCallback callback, String mealID) {
         // 1. Yöntem: Unsigned upload (Upload preset gerektirir)
         try {
+            String userId = firebaseRepository.getCurrentUserId();
             String requestId = MediaManager.get().upload(uri)
                     .unsigned("my_preset") // Cloudinary konsolundan oluşturduğunuz preset adını buraya yazın
+                    .option("public_id", "user_images/" + userId + "/" + mealID)
                     .callback(new UploadCallback() {
                         @Override
                         public void onStart(String requestId) {
@@ -178,9 +188,9 @@ public class CloudinaryServiceManager {
                         @Override
                         public void onError(String requestId, ErrorInfo error) {
                             Log.e(TAG, "Upload error: " + error.getDescription());
-                            
+
                             // Urisigned upload başarısız olursa signed upload deneyelim
-                            uploadUriSigned(uri, callback);
+                            uploadUriSigned(uri, callback,mealID);
                         }
 
                         @Override
@@ -192,18 +202,20 @@ public class CloudinaryServiceManager {
         } catch (Exception e) {
             Log.e(TAG, "Unsigned upload exception", e);
             // Hata durumunda signed upload deneyelim
-            uploadUriSigned(uri, callback);
+            uploadUriSigned(uri, callback, mealID);
         }
     }
 
     // İmzalı (signed) URI yükleme metodu - Upload preset gerektirmez
-    private void uploadUriSigned(Uri uri, final CloudinaryUploadCallback callback) {
+    private void uploadUriSigned(Uri uri, final CloudinaryUploadCallback callback, String mealID) {
         try {
+            String userId = firebaseRepository.getCurrentUserId();
             Map<String, Object> options = new HashMap<>();
             options.put("public_id", "app_upload_" + UUID.randomUUID().toString());
-            
+
             String requestId = MediaManager.get().upload(uri)
                     .option("api_key", BuildConfig.CLOUDINARY_API_KEY)
+                    .option("public_id", "user_images/" + userId + "/" + mealID)
                     .options(options)
                     .callback(new UploadCallback() {
                         @Override
