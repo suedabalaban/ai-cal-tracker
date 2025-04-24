@@ -1,3 +1,8 @@
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStreamReader
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
@@ -15,6 +20,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Cloudinary API anahtarlarını tanımla
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", getLocalProperty("cloudinary.cloud_name"))
+        buildConfigField("String", "CLOUDINARY_API_KEY", getLocalProperty("cloudinary.api_key"))
+        buildConfigField("String", "CLOUDINARY_API_SECRET", getLocalProperty("cloudinary.api_secret"))
     }
 
     buildTypes {
@@ -32,7 +42,20 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
+}
+
+// local.properties'den değerleri oku
+fun getLocalProperty(key: String): String {
+    val properties = Properties()
+    val localProperties = File(rootDir, "local.properties")
+    if (localProperties.isFile) {
+        InputStreamReader(FileInputStream(localProperties), Charsets.UTF_8).use { reader ->
+            properties.load(reader)
+        }
+    }
+    return if (properties.containsKey(key)) "\"${properties.getProperty(key)}\"" else "\"\""
 }
 
 dependencies {
@@ -53,4 +76,12 @@ dependencies {
 
     implementation(libs.firebase.firestore)
     implementation(libs.google.firebase.storage)
+
+ 
+    // Retrofit ve Cloudinary bağımlılıkları
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.gson)
+    implementation(libs.okhttp.logging)
+    implementation(libs.cloudinary)
 }

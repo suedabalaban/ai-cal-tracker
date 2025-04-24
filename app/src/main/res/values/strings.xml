@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">AI CAL TRACKER</string>
+    <string name="motto">Keep track of your nutrition!</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="test_number">1000</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -51,6 +55,9 @@
     <string name="protein_left">Protein left</string>
     <string name="carbs_left">Carbs left</string>
     <string name="calories_left">Calories left</string>
+    <string name="carbs">Carbohydrates</string>
+    <string name="fats">Fats</string>
+    <string name="proteins">Proteins</string>
     <string name="_1887">1887</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -102,4 +109,33 @@
     <string name="invalid_email">Please enter a valid email</string>
     <string name="password_too_short">Password must be at least 6 characters</string>
 
+    <string name="daily_calorie">Daily Calorie</string>
+    <string name="macronutrients">Macronutrients</string>
+    <string name="water_tracking">Water Tracking</string>
+    <string name="calorie_goals">Calorie Goals</string>
+    <string name="weight_loss">Weight Loss</string>
+    <string name="weight_maintenance">Weight Maintain</string>
+    <string name="weight_gain">Weight Gain</string>
+    <string name="liter">/%d Liter</string>
+    <string name="cm">%d cm</string>
+    <string name="kg">%d kg</string>
+    <string name="percent">%d %%</string>
+    <string name="total_kcal_number">/%d kcal </string>
+    <string name="total_gram_number">/%d g </string>
+    <string name="profile">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="home_page">Home Page</string>
+    <string name="logout">Logout</string>
+
+    <string name="edit_title">Edit %s</string>
+    <string name="edit_message">Please enter a new value.</string>
+    <string name="edit">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit_success">Your information has been successfully updated.</string>
+
+
+
+    <string name="image_uploading">Image is uploading…</string>
+    <string name="image_uploaded">"Image Uploaded Successfully"</string>
+    <string name="upload_error">"Upload Error: "</string>
 </resources>
