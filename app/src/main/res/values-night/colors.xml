@@ -140,4 +140,5 @@
     <color name="md_theme_surfaceContainer_highContrast">#313030</color>
     <color name="md_theme_surfaceContainerHigh_highContrast">#3C3B3B</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#474646</color>
+    <color name="track_color">#E2E1E1</color>
 </resources>
