@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".ai.AiAnalysisActivity">
+    tools:context=".features.food_view.FoodViewActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -154,7 +154,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/ic_water_drop" />
+                        android:src="@drawable/ic_fat_drop" />
 
                     <TextView
                         android:layout_width="wrap_content"

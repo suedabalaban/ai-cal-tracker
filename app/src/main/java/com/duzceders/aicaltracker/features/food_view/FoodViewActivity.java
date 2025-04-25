@@ -1,7 +1,5 @@
-package com.duzceders.aicaltracker.ai;
+package com.duzceders.aicaltracker.features.food_view;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
@@ -13,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.duzceders.aicaltracker.R;
 
-public class AiAnalysisActivity extends AppCompatActivity {
+public class FoodViewActivity extends AppCompatActivity {
 
     private ImageView mealImageView;
     private TextView foodNameTextView, totalCaloriesText;
@@ -23,7 +21,7 @@ public class AiAnalysisActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ai_analysis);
+        setContentView(R.layout.activity_food_view);
 
         initializeViews();
         loadImageFromIntent();
