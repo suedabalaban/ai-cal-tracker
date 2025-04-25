@@ -58,7 +58,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:trackColor="?attr/trackColor"
+                app:trackColor="@color/track_color"
                 app:trackThickness="8dp" />
 
             <ImageView
@@ -134,7 +134,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/proteinLeftLabel"
-                    app:trackColor="?attr/trackColor"
+                    app:trackColor="@color/track_color"
                     app:trackThickness="6dp" />
 
                 <ImageView
@@ -198,7 +198,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/carbsLeftValue"
-                    app:trackColor="?attr/trackColor"
+                    app:trackColor="@color/track_color"
                     app:trackThickness="6dp" />
 
                 <ImageView
@@ -261,7 +261,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/fatsLeftValue"
-                    app:trackColor="?attr/trackColor"
+                    app:trackColor="@color/track_color"
                     app:trackThickness="6dp" />
 
                 <ImageView
