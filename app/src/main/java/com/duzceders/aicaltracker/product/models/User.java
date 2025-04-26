@@ -1,6 +1,7 @@
 package com.duzceders.aicaltracker.product.models;
 
 import com.duzceders.aicaltracker.product.models.enums.ActivityLevel;
+import com.google.firebase.Timestamp;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class User {
     private String email;
     private String birthday;
     private String gender;
+    private Timestamp last_login;
 
     private int height_cm;
     private int weight_kg;
