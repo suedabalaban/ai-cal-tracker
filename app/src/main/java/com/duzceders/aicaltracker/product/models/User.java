@@ -26,8 +26,8 @@ public class User {
     private int bmr;
     private int daily_calorie_needs;
     private int daily_calorie_needs_left;
-    private int daily_water_needs_liters;
-    private int daily_water_needs_left_liters;
+    private double daily_water_needs_liters;
+    private double daily_water_needs_left_liters;
 
     private CalorieGoals calorie_goals;
     private DailyMacros daily_macros;

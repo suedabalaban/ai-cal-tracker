@@ -117,7 +117,7 @@
     <string name="weight_loss">Kilo Verme</string>
     <string name="weight_maintenance">Kilo Koruma</string>
     <string name="weight_gain">Kilo Alma</string>
-    <string name="liter">/%d Litre</string>
+    <string name="liter">/%.2f Litre</string>
     <string name="cm">%d cm</string>
     <string name="kg">%d kg</string>
     <string name="percent">%d %%</string>

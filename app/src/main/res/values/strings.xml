@@ -116,7 +116,7 @@
     <string name="weight_loss">Weight Loss</string>
     <string name="weight_maintenance">Weight Maintain</string>
     <string name="weight_gain">Weight Gain</string>
-    <string name="liter">/%d Liter</string>
+    <string name="liter">/%.2f Liter</string>
     <string name="cm">%d cm</string>
     <string name="kg">%d kg</string>
     <string name="percent">%d %%</string>

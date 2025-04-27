@@ -178,6 +178,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
                     android:progress="55"
+                    android:backgroundTint="?attr/colorSecondary"
                     android:progressTint="?attr/colorSecondary" />
 
             </LinearLayout>
@@ -231,6 +232,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/carbs"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorSecondary" />
 
                         <TextView
@@ -285,6 +287,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/proteins"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorSecondary" />
 
                         <TextView
@@ -338,6 +341,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/fats"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorSecondary" />
 
                         <TextView
@@ -495,6 +499,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
                             android:text="@string/weight_loss"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorPrimary" />
 
                         <TextView
@@ -502,6 +507,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/test_number"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorSecondary"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -527,6 +533,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
                             android:text="@string/weight_maintenance"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorPrimary" />
 
                         <TextView
@@ -534,6 +541,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/test_number"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorSecondary"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -559,6 +567,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
                             android:text="@string/weight_gain"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorPrimary" />
 
                         <TextView
@@ -566,6 +575,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/test_number"
+                            android:textSize="16sp"
                             android:textColor="?attr/colorSecondary"
                             android:textStyle="bold" />
                     </LinearLayout>

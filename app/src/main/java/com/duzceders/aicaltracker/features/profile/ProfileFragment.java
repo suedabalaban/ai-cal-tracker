@@ -80,9 +80,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setWaterInfos(User user) {
-        int totalWater = (int) user.getDaily_water_needs_liters();
-        int waterDrank = totalWater - (int) user.getDaily_water_needs_left_liters();
-        setFormattedText(binding.tvTotalWater, R.string.liter, totalWater);
+        double totalWater =  user.getDaily_water_needs_liters();
+        double waterDrank = totalWater -  user.getDaily_water_needs_left_liters();
+        binding.tvTotalWater.setText(getString(R.string.liter, totalWater));
         setTvNumber(binding.tvWaterDrinked, waterDrank);
     }
 
