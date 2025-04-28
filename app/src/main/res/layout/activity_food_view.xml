@@ -29,7 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="İskender"
+            android:hint="@string/dish_name"
             android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -44,7 +44,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:backgroundTint="#000000"
-            android:hint="100 gr için"
             android:inputType="number"
             android:padding="12dp"
             android:textColorHint="#999999"
@@ -58,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Toplam Kalori: 250 kcal"
+            android:text="@string/total_calories_format"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -99,10 +98,11 @@
                         android:src="@drawable/ic_lightning" />
 
                     <TextView
+                        android:id ="@+id/proteinTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="20g Protein"
+                        android:text="@string/protein_format"
                         android:textColor="#000000" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -128,10 +128,11 @@
                         android:src="@drawable/ic_wheat" />
 
                     <TextView
+                        android:id ="@+id/carbTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="35g Karb."
+                        android:text="@string/carbs_format"
                         android:textColor="#000000" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -157,10 +158,11 @@
                         android:src="@drawable/ic_fat_drop" />
 
                     <TextView
+                        android:id ="@+id/fatTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="15g Yağ"
+                        android:text="@string/fat_format"
                         android:textColor="#000000" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -173,7 +175,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@drawable/bordered_edittext"
-            android:hint="Yapay zeka önerisi"
+            android:hint="@string/ai_advice_hint"
             android:minLines="3"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -187,7 +189,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/bordered_edittext"
-            android:hint="Yemek hakkında not ekleyin..."
+            android:hint="@string/user_note_hint"
             android:minLines="3"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -201,12 +203,33 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:backgroundTint="#000000"
-            android:text="Kaydet"
+            android:text="@string/save_button"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/userNoteEditText" />
+
+        <Button
+            android:id="@+id/analyzeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/analyze_button"
+            app:layout_constraintTop_toBottomOf="@id/saveButton"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/analyzeProgressBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/analyzeButton" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
