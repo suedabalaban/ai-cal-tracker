@@ -131,9 +131,8 @@
     <string name="edit_message">Please enter a new value.</string>
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
+
     <string name="edit_success">Your information has been successfully updated.</string>
-
-
 
     <string name="image_uploading">Image is uploading…</string>
     <string name="image_uploaded">"Image Uploaded Successfully"</string>
@@ -147,4 +146,20 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Log Out</string>
+
+    <string name="dish_name">Dish Name: </string>
+    <string name="ai_advice_hint">AI recommendation</string>
+    <string name="user_note_hint">Add a note about this food..</string>
+    <string name="analyze_button">Analyze</string>
+    <string name="save_button">Save</string>
+    <string name="total_calories_format">Total Calories: %1$d kcal</string>
+    <string name="protein_format">%1$dg Protein</string>
+    <string name="carbs_format">%1$dg Carbs</string>
+    <string name="fat_format">%1$dg Fat</string>
+    <string name="analyzing_image">Analyzing image..</string>
+    <string name="analysis_complete">Analysis complete</string>
+    <string name="image_load_error">Could not load image</string>
+    <string name="data_processing_error">Data processing error: %1$s</string>
+    <string name="error_message">Error: %1$s</string>
+    <string name="image_processing_error">Error processing image: %1$s</string>
 </resources>
