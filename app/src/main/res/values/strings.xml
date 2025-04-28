@@ -116,7 +116,7 @@
     <string name="weight_loss">Weight Loss</string>
     <string name="weight_maintenance">Weight Maintain</string>
     <string name="weight_gain">Weight Gain</string>
-    <string name="liter">/%d Liter</string>
+    <string name="liter">/%.2f Liter</string>
     <string name="cm">%d cm</string>
     <string name="kg">%d kg</string>
     <string name="percent">%d %%</string>
@@ -133,6 +133,7 @@
     <string name="cancel">Cancel</string>
 
     <string name="edit_success">Your information has been successfully updated.</string>
+
 
     <string name="image_uploading">Image is uploading…</string>
     <string name="image_uploaded">"Image Uploaded Successfully"</string>
@@ -162,4 +163,6 @@
     <string name="data_processing_error">Data processing error: %1$s</string>
     <string name="error_message">Error: %1$s</string>
     <string name="image_processing_error">Error processing image: %1$s</string>
+
+    <string name="dark_theme">Dark Theme</string>
 </resources>

@@ -117,7 +117,7 @@
     <string name="weight_loss">Kilo Verme</string>
     <string name="weight_maintenance">Kilo Koruma</string>
     <string name="weight_gain">Kilo Alma</string>
-    <string name="liter">/%d Litre</string>
+    <string name="liter">/%.2f Litre</string>
     <string name="cm">%d cm</string>
     <string name="kg">%d kg</string>
     <string name="percent">%d %%</string>
@@ -164,4 +164,6 @@
     <string name="data_processing_error">Veri işleme hatası: %1$s</string>
     <string name="error_message">Hata: %1$s</string>
     <string name="image_processing_error">Resim işlenirken hata oldu: %1$s</string>
+
+    <string name="dark_theme">Karanlık Tema</string>
 </resources>

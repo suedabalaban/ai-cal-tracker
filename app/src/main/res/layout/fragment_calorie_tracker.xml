@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -32,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@string/_1887"
-                android:textColor="#000000"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="48sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@string/calories_left"
-                android:textColor="#757575"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/totalCaloriesValue" />
@@ -54,12 +53,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                app:indicatorColor="#FF5722"
+                app:indicatorColor="@android:color/holo_blue_light"
                 app:indicatorSize="80dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:trackColor="#E0E0E0"
+                app:trackColor="@color/track_color"
                 app:trackThickness="8dp" />
 
             <ImageView
@@ -108,7 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/_10g"
-                    android:textColor="#000000"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +118,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/protein_left"
-                    android:textColor="#757575"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/totalProteinValue" />
@@ -129,13 +128,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    app:indicatorColor="#F44336"
+                    app:indicatorColor="?attr/colorError"
                     app:indicatorSize="60dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/proteinLeftLabel"
-                    app:trackColor="#E0E0E0"
+                    app:trackColor="@color/track_color"
                     app:trackThickness="6dp" />
 
                 <ImageView
@@ -172,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/_10g"
-                    android:textColor="#000000"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -183,7 +182,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/carbs_left"
-                    android:textColor="#757575"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/totalCarbsValue" />
@@ -199,7 +198,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/carbsLeftValue"
-                    app:trackColor="#E0E0E0"
+                    app:trackColor="@color/track_color"
                     app:trackThickness="6dp" />
 
                 <ImageView
@@ -235,7 +234,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/_10g"
-                    android:textColor="#000000"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -246,7 +245,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fats_left"
-                    android:textColor="#757575"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/totalFatsValue" />
@@ -262,7 +261,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/fatsLeftValue"
-                    app:trackColor="#E0E0E0"
+                    app:trackColor="@color/track_color"
                     app:trackThickness="6dp" />
 
                 <ImageView
@@ -287,7 +286,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="@string/recently_eaten"
-        android:textColor="#000000"
+        android:textColor="?attr/colorSecondary"
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -299,7 +298,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/you_haven_t_uploaded_any_food"
-        android:textColor="#757575"
+        android:textColor="?attr/colorPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -313,7 +312,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="@string/start_tracking_today_s_meals_by_taking_a_quick_pictures"
-        android:textColor="#757575"
+        android:textColor="?attr/colorPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -334,36 +333,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginBottom="130dp"
             android:layout_marginEnd="0dp"
+            android:layout_marginBottom="130dp"
+            android:importantForAccessibility="no"
             android:visibility="gone"
-            android:contentDescription="Select from Gallery"
             app:backgroundTint="#F5F5F5"
-            app:tint="#000000"
-            app:srcCompat="@drawable/ic_gallery" />
+            app:srcCompat="@drawable/ic_gallery"
+            app:tint="#000000" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabCamera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginBottom="70dp"
             android:layout_marginEnd="0dp"
+            android:layout_marginBottom="70dp"
+            android:importantForAccessibility="no"
             android:visibility="gone"
-            android:contentDescription="Take Photo"
             app:backgroundTint="#F5F5F5"
-            app:tint="#000000"
-            app:srcCompat="@drawable/ic_camera" />
+            app:srcCompat="@drawable/ic_camera"
+            app:tint="#000000" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:contentDescription="Main Action"
+            android:importantForAccessibility="no"
             app:backgroundTint="#000000"
-            app:tint="#FFFFFF"
-            app:srcCompat="@drawable/ic_add" />
+            app:srcCompat="@drawable/ic_add"
+            app:tint="?attr/colorPrimary" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

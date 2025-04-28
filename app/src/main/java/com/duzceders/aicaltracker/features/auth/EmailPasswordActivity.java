@@ -36,11 +36,13 @@ public class EmailPasswordActivity extends AppCompatActivity {
         initComponents();
         registerEventHandlers();
     }
+
     //kullanıcı giriş kontrolü ve yönlendirme
     @Override
     protected void onStart() {
         super.onStart();
-        if(firebaseRepository.getCurrentUserId() != null){
+        if (firebaseRepository.getCurrentUserId() != null) {
+            firebaseRepository.runDailyNeedsTask();
             navigateToMainActivity();
         }
     }
@@ -53,7 +55,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         passwordTextField = findViewById(R.id.passwordTextField);
         btnLogin = findViewById(R.id.loginButton);
         btnSignUp = findViewById(R.id.signUpButton);
-        firebaseRepository= new FirebaseRepository();
+        firebaseRepository = new FirebaseRepository();
     }
 
     private void registerEventHandlers() {
@@ -120,7 +122,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         }
     }
 
-    private void btnSignUp_onClick(){
+    private void btnSignUp_onClick() {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
