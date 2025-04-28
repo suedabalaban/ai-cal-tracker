@@ -1,5 +1,6 @@
 package com.duzceders.aicaltracker.features.drawer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -14,6 +15,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.databinding.ActivityDrawerBinding;
+import com.duzceders.aicaltracker.features.auth.EmailPasswordActivity;
+import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.google.android.material.navigation.NavigationView;
 
 public class DrawerActivity extends AppCompatActivity {
@@ -22,10 +25,13 @@ public class DrawerActivity extends AppCompatActivity {
     private ActivityDrawerBinding binding;
     private NavController navController;
     private ActionBarDrawerToggle toggle;
+    private FirebaseRepository firebaseRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        firebaseRepository = new FirebaseRepository();
 
         binding = ActivityDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -67,7 +73,12 @@ public class DrawerActivity extends AppCompatActivity {
         } else if (id == R.id.nav_settings) {
             navController.navigate(R.id.settingsFragment);
         } else if (id == R.id.nav_logout) {
-            // Handle logout functionality
+            firebaseRepository.signOut();
+
+            Intent intent = new Intent(this, EmailPasswordActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         }
 
         binding.drawerLayout.closeDrawers();

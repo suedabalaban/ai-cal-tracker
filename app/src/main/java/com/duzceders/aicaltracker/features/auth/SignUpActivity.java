@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.models.enums.ActivityLevel;
+import com.duzceders.aicaltracker.product.parser.AgeParser;
+import com.duzceders.aicaltracker.product.service.DailyCalorieManager;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -21,13 +23,11 @@ public class SignUpActivity extends AppCompatActivity {
     private int currentStep = 1; // Track current step
     private String email, password, gender;
     private EditText emailEditText, passwordEditText, nameEditText, surnameEditText,
-            birthdateEditText , weightEditText, heightEditText, bodyFatEditText;
+            birthdateEditText, weightEditText, heightEditText, bodyFatEditText;
     private Button nextButton;
     ActivityLevel level;
     private FirebaseRepository firebaseRepository;
     private User user = new User();
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +184,7 @@ public class SignUpActivity extends AppCompatActivity {
             user.setBirthday(birthdateInput);
             user.setWeight_kg(Integer.parseInt(weightInput));
             user.setHeight_cm(Integer.parseInt(heightInput));
-            user.setBody_fat_percent(Double.parseDouble(bodyFatInput));
+            user.setBody_fat_percent(Integer.parseInt(bodyFatInput));
 
             String gender = selectedGenderId == R.id.radioMale ? "Male" : selectedGenderId == R.id.radioFemale ? "Female" : "Unspecified";
             user.setGender(gender);
@@ -219,8 +219,9 @@ public class SignUpActivity extends AppCompatActivity {
             } else if (selectedId == R.id.radioActive) {
                 level = ActivityLevel.ACTIVE;
             } else if (selectedId == R.id.radioVeryActive) {
-                level = ActivityLevel.VERY_ACTIVE;;
-            }else{
+                level = ActivityLevel.VERY_ACTIVE;
+                ;
+            } else {
                 Toast.makeText(this, getString(R.string.please_select_activity), Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -248,10 +249,11 @@ public class SignUpActivity extends AppCompatActivity {
         firebaseRepository.signUp(email, password, new FirebaseRepository.OnAuthResultListener() {
             @Override
             public void onSuccess() {
+                setupUserDetails();
                 firebaseRepository.addUser(user);
                 Intent intent = new Intent(SignUpActivity.this, EmailPasswordActivity.class);
                 startActivity(intent);
-                finish(); // close signup activity
+                finish();
             }
 
             @Override
@@ -260,6 +262,44 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void setupUserDetails() {
+        DailyCalorieManager dailyCalorieManager = new DailyCalorieManager();
+        AgeParser ageParser = new AgeParser();
+        int ageString = ageParser.calculateAge(user.getBirthday());
+        int bmr = dailyCalorieManager.calculateBMR(user.getGender(), user.getHeight_cm(), user.getWeight_kg(), ageString);
+        int dailyCalorieNeeds = dailyCalorieManager.calculateTDEE(bmr, user.getActivity_level());
+        user.setBmr(bmr);
+        user.setDaily_calorie_needs(dailyCalorieNeeds);
+        user.setDaily_calorie_needs_left(dailyCalorieNeeds);
+
+        // Calorie goals
+        User.CalorieGoals calorieGoals = new User.CalorieGoals();
+        user.setCalorie_goals(calorieGoals);
+        calorieGoals.setMaintain(dailyCalorieNeeds);
+        calorieGoals.setWeight_gain(dailyCalorieNeeds + 500);
+        calorieGoals.setWeight_loss(dailyCalorieNeeds - 500);
+
+        // Daily macros calculations
+        User.DailyMacros dailyMacros = new User.DailyMacros();
+        user.setDaily_macros(dailyMacros);
+
+        // Makro besinlerin hesaplanması
+        dailyMacros.setDaily_carbs_need_g((int) Math.round(dailyCalorieNeeds * 0.45 / 4));
+        dailyMacros.setDaily_fats_need_g((int) Math.round(dailyCalorieNeeds * 0.25 / 9));
+        dailyMacros.setDaily_proteins_need_g((int) Math.round(dailyCalorieNeeds * 0.30 / 4));
+
+        // Günlük makro kalanları
+        dailyMacros.setDaily_carbs_left_g(dailyMacros.getDaily_carbs_need_g());
+        dailyMacros.setDaily_fats_left_g(dailyMacros.getDaily_fats_need_g());
+        dailyMacros.setDaily_proteins_left_g(dailyMacros.getDaily_proteins_need_g());
+
+        // Su ihtiyacı
+        user.setDaily_water_needs_liters((int) Math.round(user.getWeight_kg() * 0.033));
+        user.setDaily_water_needs_left_liters((int) Math.round(user.getWeight_kg() * 0.033));
+    }
+
+
     private boolean isAlpha(String input) {
         return input.matches("^[a-zA-ZçÇğĞıİöÖşŞüÜ\\s]+$");
     }
