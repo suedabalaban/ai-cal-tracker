@@ -147,8 +147,6 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Log Out</string>
 
-    <string name="dark_theme">Dark Theme</string>
-
     <string name="dish_name">Dish Name: </string>
     <string name="ai_advice_hint">AI recommendation</string>
     <string name="user_note_hint">Add a note about this food..</string>
@@ -164,4 +162,6 @@
     <string name="data_processing_error">Data processing error: %1$s</string>
     <string name="error_message">Error: %1$s</string>
     <string name="image_processing_error">Error processing image: %1$s</string>
+
+    <string name="dark_theme">Dark Theme</string>
 </resources>
