@@ -25,6 +25,9 @@ android {
         buildConfigField("String", "CLOUDINARY_CLOUD_NAME", getLocalProperty("cloudinary.cloud_name"))
         buildConfigField("String", "CLOUDINARY_API_KEY", getLocalProperty("cloudinary.api_key"))
         buildConfigField("String", "CLOUDINARY_API_SECRET", getLocalProperty("cloudinary.api_secret"))
+
+        buildConfigField ("String", "GEMINI_API_KEY", getLocalProperty("GEMINI_API_KEY"))
+        buildConfigField ("String", "GEMINI_PROJECT_ID", getLocalProperty("GEMINI_PROJECT_ID"))
     }
 
     buildTypes {
@@ -76,7 +79,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(platform(libs.firebase.bom))
-
     implementation(libs.firebase.firestore)
     implementation(libs.google.firebase.storage)
 
@@ -92,4 +94,6 @@ dependencies {
     implementation (libs.navigation.fragment.v277)
     implementation (libs.navigation.ui.v277)
     implementation (libs.material)
+
+    implementation (libs.generativeai)
 }

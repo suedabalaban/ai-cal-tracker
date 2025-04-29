@@ -138,11 +138,32 @@
     <string name="image_uploading">Fotoğraf yükleniyor…</string>
     <string name="image_uploaded">"Fotoğraf başarıyla yüklendi: "</string>
     <string name="upload_error">"Yükleme hatası: "</string>
-
+    <string name="title_activity_drawer">DrawerActivity</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
 
     <string name="menu_home">Ana Sayfa</string>
     <string name="menu_profile">Profil</string>
     <string name="menu_settings">Ayarlar</string>
     <string name="menu_logout">Çıkış Yap</string>
+
+    <string name="dish_name">Yemek Adı: </string>
+    <string name="ai_advice_hint">AI recommendation</string>
+
+    <string name="user_note_hint">Yemek hakkında not ekleyin..</string>
+    <string name="analyze_button">Analiz Et</string>
+    <string name="save_button">Kaydet</string>
+    <string name="total_calories_format">Toplam Kalori: %1$d kcal</string>
+    <string name="protein_format">%1$dg Protein</string>
+    <string name="carbs_format">%1$dg Karb</string>
+    <string name="fat_format">%1$dg Yağ</string>
+    <string name="analyzing_image">Resim analiz ediliyor..</string>
+    <string name="analysis_complete">Analiz tamamlandı</string>
+    <string name="image_load_error">Resim yüklenemedi</string>
+    <string name="data_processing_error">Veri işleme hatası: %1$s</string>
+    <string name="error_message">Hata: %1$s</string>
+    <string name="image_processing_error">Resim işlenirken hata oldu: %1$s</string>
+
     <string name="dark_theme">Karanlık Tema</string>
 </resources>
