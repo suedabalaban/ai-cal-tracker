@@ -116,7 +116,7 @@
     <string name="weight_loss">Weight Loss</string>
     <string name="weight_maintenance">Weight Maintain</string>
     <string name="weight_gain">Weight Gain</string>
-    <string name="liter">/%d Liter</string>
+    <string name="liter">/%.2f Liter</string>
     <string name="cm">%d cm</string>
     <string name="kg">%d kg</string>
     <string name="percent">%d %%</string>
@@ -131,8 +131,8 @@
     <string name="edit_message">Please enter a new value.</string>
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
-
     <string name="edit_success">Your information has been successfully updated.</string>
+
 
     <string name="image_uploading">Image is uploading…</string>
     <string name="image_uploaded">"Image Uploaded Successfully"</string>
@@ -146,6 +146,8 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Log Out</string>
+
+    <string name="dark_theme">Dark Theme</string>
 
     <string name="dish_name">Dish Name: </string>
     <string name="ai_advice_hint">AI recommendation</string>
