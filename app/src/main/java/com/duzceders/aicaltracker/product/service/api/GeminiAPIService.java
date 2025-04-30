@@ -1,9 +1,12 @@
 package com.duzceders.aicaltracker.product.service.api;
 
+import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
 import com.duzceders.aicaltracker.BuildConfig;
+import com.duzceders.aicaltracker.R;
+import com.duzceders.aicaltracker.product.utils.LanguageHelper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -30,7 +33,7 @@ public class GeminiAPIService {
         void onError(Exception e);
     }
 
-    public static void analyzeImage(byte[] imageBytes, GeminiCallback callback) {
+    public static void analyzeImage(Context context, byte[] imageBytes, GeminiCallback callback) {
         try {
             String base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
 
@@ -44,17 +47,32 @@ public class GeminiAPIService {
 
             // Prompt kısmı
             JsonObject textPart = new JsonObject();
-            textPart.addProperty("text",
-                    "Bu bir yemek fotoğrafı. Lütfen sadece aşağıdaki formatta JSON döndür:\n" +
-                            "{\n" +
-                            "\"yemek_ismi\": (string cinsinden)\n" +
-                            "\"kalori\": (tam sayı kcal cinsinden),\n" +
-                            "\"protein\": (tam sayı gram cinsinden),\n" +
-                            "\"yağ\": (tam sayı gram cinsinden),\n" +
-                            "\"karbonhidrat\": (tam sayı gram cinsinden),\n" +
-                            "\"oneriler\": (yemeği nasıl daha sağlıklı hale getirebilirim, yemeğin özelliklerine bağlı kalarak analiz et? kısa açıklama)\n" +
-                            "}\n" +
-                            "Hiçbir açıklama yazmadan SADECE JSON ver. Görseli analiz ederek bu bilgileri tahmin et.");
+            String promptText;
+            String currentLanguage = LanguageHelper.getLanguage(context);
+            if ("tr".equals(currentLanguage)) {
+                promptText = "Bu bir yemek fotoğrafı. Lütfen sadece aşağıdaki formatta JSON döndür:\n" +
+                        "{\n" +
+                        "\"yemek_ismi\": (string cinsinden),\n" +
+                        "\"kalori\": (tam sayı kcal cinsinden),\n" +
+                        "\"protein\": (tam sayı gram cinsinden),\n" +
+                        "\"yağ\": (tam sayı gram cinsinden),\n" +
+                        "\"karbonhidrat\": (tam sayı gram cinsinden),\n" +
+                        "\"oneriler\": (yemeği nasıl daha sağlıklı hale getirebilirim, yemeğin özelliklerine bağlı kalarak analiz et? kısa açıklama)\n" +
+                        "}\n" +
+                        "Hiçbir açıklama yazmadan SADECE JSON ver. Görseli analiz ederek bu bilgileri tahmin et.";
+            } else {
+                promptText = "This is a food image. Please return JSON in the following format only:\n" +
+                        "{\n" +
+                        "\"food_name\": (as string),\n" +
+                        "\"calories\": (as integer in kcal),\n" +
+                        "\"protein\": (as integer in grams),\n" +
+                        "\"fat\": (as integer in grams),\n" +
+                        "\"carbs\": (as integer in grams),\n" +
+                        "\"recommendations\": (short explanation of how to make this meal healthier based on its characteristics)\n" +
+                        "}\n" +
+                        "Return ONLY JSON without any explanation. Use the image analysis to estimate this information.";
+            }
+            textPart.addProperty("text", promptText);
 
             // Parts listesi
             JsonArray partsArray = new JsonArray();
@@ -121,5 +139,4 @@ public class GeminiAPIService {
             return "{}";  // Hata durumunda boş bir JSON dön
         }
     }
-
 }
