@@ -1,5 +1,7 @@
 package com.duzceders.aicaltracker.features.auth;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -7,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
+import androidx.fragment.app.Fragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -92,12 +95,12 @@ public class EmailPasswordActivity extends AppCompatActivity {
                     public void onSuccess() {
                         startActivity(new Intent(EmailPasswordActivity.this, DrawerActivity.class));
                         finish();
-                        Toast.makeText(EmailPasswordActivity.this, "Log in successful ", Toast.LENGTH_SHORT).show();
+                        showToast(getString(R.string.login_successful));
                     }
 
                     @Override
                     public void onFailure(String errorMessage) {
-                        Toast.makeText(EmailPasswordActivity.this, "Log in failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        showToast(getString(R.string.login_failed));
                     }
                 });
             }
@@ -107,7 +110,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
     private void validatePassword() {
         String content = passwordEditText.getText().toString();
         if (content.length() < 5) {
-            passwordTextField.setError("This field must consist of at least 5 characters");
+            passwordTextField.setError(getResources().getString(R.string.password_too_short));
         } else {
             passwordTextField.setError(null); // Clear any previous error
         }
@@ -116,7 +119,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
     private void validateEmail() {
         String email = emailEditText.getText().toString().trim();
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailTextField.setError("Please enter a valid email address");
+            emailTextField.setError(getResources().getString(R.string.invalid_email));
         } else {
             emailTextField.setError(null); // Clear any previous error
         }
@@ -139,4 +142,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
         finish();
     }
 
+    private void showToast(String message) {
+        Toast.makeText(EmailPasswordActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
 }
