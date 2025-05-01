@@ -88,6 +88,12 @@ public class CloudinaryServiceManager {
                         public void onSuccess(String requestId, Map resultData) {
                             String secureUrl = (String) resultData.get("secure_url");
                             Log.d(TAG, "Upload successful: " + secureUrl);
+
+                            for (Object key : resultData.keySet()) {
+                                Object value = resultData.get(key);
+                                Log.d(TAG, key + " : " + value);
+                            }
+
                             callback.onSuccess(secureUrl);
                         }
 

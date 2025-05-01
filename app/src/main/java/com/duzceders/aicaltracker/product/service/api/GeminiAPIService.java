@@ -33,7 +33,7 @@ public class GeminiAPIService {
         void onError(Exception e);
     }
 
-    public static void analyzeImage(Context context, byte[] imageBytes, GeminiCallback callback) {
+    public void analyzeImage(Context context, byte[] imageBytes, GeminiCallback callback) {
         try {
             String base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
 

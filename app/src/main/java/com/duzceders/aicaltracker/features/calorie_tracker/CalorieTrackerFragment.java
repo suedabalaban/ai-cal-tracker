@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.databinding.FragmentCalorieTrackerBinding;
+import com.duzceders.aicaltracker.features.calorie_tracker.factory.CalorieTrackerViewModelFactory;
 import com.duzceders.aicaltracker.features.food_view.FoodViewActivity;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
@@ -31,8 +31,9 @@ import com.duzceders.aicaltracker.product.service.manager.CloudinaryServiceManag
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Objects;
-import java.util.UUID;
 
 public class CalorieTrackerFragment extends Fragment {
 
@@ -53,8 +54,20 @@ public class CalorieTrackerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(requireContext());
         FirebaseRepository firebaseRepository = new FirebaseRepository();
-        viewModel = new ViewModelProvider(this).get(CalorieTrackerViewModel.class);
+        viewModel = new ViewModelProvider(
+                this,
+                new CalorieTrackerViewModelFactory(requireActivity().getApplication())
+        ).get(CalorieTrackerViewModel.class);
         cloudinaryServiceManager = new CloudinaryServiceManager(requireContext());
+
+
+        viewModel.getImageUrlLiveData().observe(this, imageUrl -> {
+            if (imageUrl != null) {
+                Intent intent = new Intent(getContext(), FoodViewActivity.class);
+                intent.putExtra("imageUrl", imageUrl);
+                startActivity(intent);
+            }
+        });
     }
 
     @Nullable
@@ -126,8 +139,6 @@ public class CalorieTrackerFragment extends Fragment {
         final boolean[] isFabOpen = {false};
 
         fabMain.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), FoodViewActivity.class);
-            startActivity(intent);
             int visibility = isFabOpen[0] ? View.GONE : View.VISIBLE;
             fabCamera.setVisibility(visibility);
             fabGallery.setVisibility(visibility);
@@ -167,7 +178,8 @@ public class CalorieTrackerFragment extends Fragment {
             if (photo == null) return;
             showToast(getString(R.string.image_uploading));
             /// add gemini method here
-            uploadImageToCloudinaryFromCamera(photo);
+            viewModel.analyzeImageFromCamera(photo, requireContext());
+
         }
 
         if (requestCode == GALLERY_INTENT_REQUEST_CODE && data != null) {
@@ -175,60 +187,74 @@ public class CalorieTrackerFragment extends Fragment {
             if (selectedImageUri == null) return;
 
             showToast(getString(R.string.image_uploading));
-            /// add gemini method here
-            uploadImageToCloudinaryFromGallery(selectedImageUri);
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.requireActivity().getContentResolver(), selectedImageUri);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                bitmap.recycle();
+                /// add here method
+                viewModel.analyzeImageFromGallery(selectedImageUri, byteArray, requireContext());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
         }
     }
 
-    private void uploadImageToCloudinaryFromCamera(Bitmap bitmap) {
-        if (bitmap == null) {
-            showToast(getString(R.string.upload_error));
-            return;
-        }
-        String mealId = UUID.randomUUID().toString();
-        cloudinaryServiceManager.uploadImageFromCamera(bitmap, new CloudinaryServiceManager.CloudinaryUploadCallback() {
-            @Override
-            public void onSuccess(String imageUrl) {
-                requireActivity().runOnUiThread(() -> {
-                    showToast(getString(R.string.image_uploaded) + imageUrl);
-                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
-                });
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                requireActivity().runOnUiThread(() -> {
-                    showToast(getString(R.string.upload_error) + errorMessage);
-                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
-                });
-            }
-        }, mealId);
-    }
-
-    private void uploadImageToCloudinaryFromGallery(Uri imageUri) {
-        if (imageUri == null) {
-            showToast(getString(R.string.upload_error));
-            return;
-        }
-        String mealId = UUID.randomUUID().toString();
-        cloudinaryServiceManager.uploadImageFromGallery(imageUri, new CloudinaryServiceManager.CloudinaryUploadCallback() {
-            @Override
-            public void onSuccess(String imageUrl) {
-                requireActivity().runOnUiThread(() -> {
-                    showToast(getString(R.string.image_uploaded) + imageUrl);
-                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
-                });
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                requireActivity().runOnUiThread(() -> {
-                    showToast(getString(R.string.upload_error) + errorMessage);
-                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
-                });
-            }
-        }, mealId);
-    }
+//    private void uploadImageToCloudinaryFromCamera(Bitmap bitmap) {
+//        if (bitmap == null) {
+//            showToast(getString(R.string.upload_error));
+//            return;
+//        }
+//        String mealId = UUID.randomUUID().toString();
+//        cloudinaryServiceManager.uploadImageFromCamera(bitmap, new CloudinaryServiceManager.CloudinaryUploadCallback() {
+//            @Override
+//            public void onSuccess(String imageUrl) {
+//                requireActivity().runOnUiThread(() -> {
+//                    showToast(getString(R.string.image_uploaded) + imageUrl);
+//                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onError(String errorMessage) {
+//                requireActivity().runOnUiThread(() -> {
+//                    showToast(getString(R.string.upload_error) + errorMessage);
+//                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
+//                });
+//            }
+//        }, mealId);
+//    }
+//
+//    private void uploadImageToCloudinaryFromGallery(Uri imageUri) {
+//        if (imageUri == null) {
+//            showToast(getString(R.string.upload_error));
+//            return;
+//        }
+//        String mealId = UUID.randomUUID().toString();
+//        cloudinaryServiceManager.uploadImageFromGallery(imageUri, new CloudinaryServiceManager.CloudinaryUploadCallback() {
+//            @Override
+//            public void onSuccess(String imageUrl) {
+//                requireActivity().runOnUiThread(() -> {
+//                    showToast(getString(R.string.image_uploaded) + imageUrl);
+//                    Log.d(TAG, "Yüklenen fotoğraf URL: " + imageUrl);
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onError(String errorMessage) {
+//                requireActivity().runOnUiThread(() -> {
+//                    showToast(getString(R.string.upload_error) + errorMessage);
+//                    Log.e(TAG, "Yükleme hatası: " + errorMessage);
+//                });
+//            }
+//        }, mealId);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
