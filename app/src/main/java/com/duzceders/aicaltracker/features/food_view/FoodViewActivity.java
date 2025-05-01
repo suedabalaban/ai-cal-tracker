@@ -5,12 +5,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.databinding.ActivityFoodViewBinding;
 import com.duzceders.aicaltracker.product.models.FoodInfo;
 import com.duzceders.aicaltracker.product.models.Meal;
+import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.UserField;
 import com.duzceders.aicaltracker.product.parser.MealIDParser;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
@@ -23,13 +26,17 @@ public class FoodViewActivity extends AppCompatActivity {
 
     private GeminiAPIService geminiAPIService;
     private FirebaseRepository firebaseRepository;
+    private FoodViewActivityViewModel viewModel;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         LanguageHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(FoodViewActivityViewModel.class);
         binding = ActivityFoodViewBinding.inflate(getLayoutInflater());
         firebaseRepository = new FirebaseRepository();
+        getUserInfo();
         setContentView(binding.getRoot());
         String imageUrl = getIntent().getStringExtra("imageUrl");
         FoodInfo foodInfo = (FoodInfo) getIntent().getSerializableExtra("foodInfo");
@@ -57,6 +64,15 @@ public class FoodViewActivity extends AppCompatActivity {
         }
     }
 
+    private void getUserInfo() {
+        viewModel.getUserData().observe(this, user -> {
+            if (user != null) {
+                this.user = user;
+            } else {
+                showToast("User data is null");
+            }
+        });
+    }
 
     private void setListeners(FoodInfo foodInfo) {
         binding.saveButton.setOnClickListener(v -> {
@@ -68,14 +84,22 @@ public class FoodViewActivity extends AppCompatActivity {
             meal.setProtein_g(foodInfo.getProtein());
             meal.setFat_g(foodInfo.getFat());
             meal.setCarbs_g(foodInfo.getCarbs());
-            meal.setCalorie_g(foodInfo.getCalories());
+            meal.setCalorie_kcal(foodInfo.getCalories());
             meal.setMeal_time(new com.google.firebase.Timestamp(new java.util.Date()));
             meal.setRecommendations(foodInfo.getRecommendations());
 
             String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
+
+
+            firebaseRepository.updateUser(UserField.DAILY_CALORIE_NEEDS_LEFT, (user.getDaily_calorie_needs_left() - foodInfo.getCalories()));
+            firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_CARBS_LEFT_G, (user.getDaily_macros().getDaily_carbs_left_g() - foodInfo.getCarbs()));
+            firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_FATS_LEFT_G, (user.getDaily_macros().getDaily_fats_left_g() - foodInfo.getFat()));
+            firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_PROTEINS_LEFT_G, (user.getDaily_macros().getDaily_proteins_left_g() - foodInfo.getProtein()));
+
             firebaseRepository.addMeal(meal, mealID);
-            /// reduce the macros of user
+
             finish();
+            /// drawer activity tekrar tetiklenmeli
         });
     }
 
