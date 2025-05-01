@@ -52,14 +52,14 @@ public class GeminiAPIService {
             if ("tr".equals(currentLanguage)) {
                 promptText = "Bu bir yemek fotoğrafı. Lütfen sadece aşağıdaki formatta JSON döndür:\n" +
                         "{\n" +
-                        "\"yemek_ismi\": (string cinsinden),\n" +
-                        "\"kalori\": (tam sayı kcal cinsinden),\n" +
+                        "\"food_name\": (string cinsinden),\n" +
+                        "\"calories\": (tam sayı kcal cinsinden),\n" +
                         "\"protein\": (tam sayı gram cinsinden),\n" +
-                        "\"yağ\": (tam sayı gram cinsinden),\n" +
-                        "\"karbonhidrat\": (tam sayı gram cinsinden),\n" +
-                        "\"oneriler\": (yemeği nasıl daha sağlıklı hale getirebilirim, yemeğin özelliklerine bağlı kalarak analiz et? kısa açıklama)\n" +
+                        "\"fat\": (tam sayı gram cinsinden),\n" +
+                        "\"carbs\": (tam sayı gram cinsinden),\n" +
+                        "\"recommendations\": (yemeği nasıl daha sağlıklı hale getirebilirim, yemeğin özelliklerine bağlı kalarak analiz et? kısa açıklama)\n" +
                         "}\n" +
-                        "Hiçbir açıklama yazmadan SADECE JSON ver. Görseli analiz ederek bu bilgileri tahmin et.";
+                        "Hiçbir açıklama yazmadan SADECE JSON ver. Görseli analiz ederek bu bilgileri tahmin et.Türkçe cevap ver";
             } else {
                 promptText = "This is a food image. Please return JSON in the following format only:\n" +
                         "{\n" +
@@ -70,7 +70,7 @@ public class GeminiAPIService {
                         "\"carbs\": (as integer in grams),\n" +
                         "\"recommendations\": (short explanation of how to make this meal healthier based on its characteristics)\n" +
                         "}\n" +
-                        "Return ONLY JSON without any explanation. Use the image analysis to estimate this information.";
+                        "Return ONLY JSON without any explanation. Use the image analysis to estimate this information. Respond in English.";
             }
             textPart.addProperty("text", promptText);
 

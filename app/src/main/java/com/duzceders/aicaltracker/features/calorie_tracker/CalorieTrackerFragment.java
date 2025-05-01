@@ -59,15 +59,24 @@ public class CalorieTrackerFragment extends Fragment {
                 new CalorieTrackerViewModelFactory(requireActivity().getApplication())
         ).get(CalorieTrackerViewModel.class);
         cloudinaryServiceManager = new CloudinaryServiceManager(requireContext());
-
+        Intent intent = new Intent(getContext(), FoodViewActivity.class);
 
         viewModel.getImageUrlLiveData().observe(this, imageUrl -> {
             if (imageUrl != null) {
-                Intent intent = new Intent(getContext(), FoodViewActivity.class);
+
                 intent.putExtra("imageUrl", imageUrl);
+
+            }
+        });
+
+        viewModel.getFoodInfoLiveData().observe(this, foodInfo -> {
+            if (foodInfo != null) {
+
+                intent.putExtra("foodInfo", foodInfo);
                 startActivity(intent);
             }
         });
+
     }
 
     @Nullable

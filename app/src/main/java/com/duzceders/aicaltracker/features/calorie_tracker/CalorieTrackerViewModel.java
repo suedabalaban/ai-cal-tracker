@@ -4,16 +4,21 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.duzceders.aicaltracker.product.models.FoodInfo;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
 import com.duzceders.aicaltracker.product.service.manager.CloudinaryServiceManager;
 import com.duzceders.aicaltracker.product.utils.SingleLiveEvent;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
@@ -26,7 +31,7 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
     @Getter
     private final SingleLiveEvent<String> imageUrlLiveData = new SingleLiveEvent<>();
     @Getter
-    private final SingleLiveEvent<String> geminiResponseLiveData = new SingleLiveEvent<>();
+    private final SingleLiveEvent<FoodInfo> foodInfoLiveData = new SingleLiveEvent<>();
     @Getter
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
@@ -62,7 +67,8 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
                 geminiService.analyzeImage(context, imageBytes, new GeminiAPIService.GeminiCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        geminiResponseLiveData.postValue(result);
+                        FoodInfo foodInfo = processGeminiResponse(result);
+                        foodInfoLiveData.postValue(foodInfo);
                         changeLoading();
                     }
 
@@ -95,7 +101,7 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
                 geminiService.analyzeImage(context, imageBytes, new GeminiAPIService.GeminiCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        geminiResponseLiveData.postValue(result);
+//                        geminiResponseLiveData.postValue(result);
                         changeLoading();
                     }
 
@@ -125,4 +131,42 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
         return stream.toByteArray();
     }
 
+    private FoodInfo processGeminiResponse(String result) {
+        try {
+
+            JSONObject fullResponse = new JSONObject(result);
+            String textContent = fullResponse.getJSONArray("candidates").getJSONObject(0).getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text");
+
+            String cleanedJson = textContent.replace("```json", "").replace("```", "").trim();
+
+            JSONObject responseJson = new JSONObject(cleanedJson);
+
+            String foodName;
+            double calories, protein, fat, carbs;
+            String recommendations;
+
+
+            foodName = responseJson.optString("food_name", "Name not found");
+            calories = responseJson.optDouble("calories", 0);
+            protein = responseJson.optDouble("protein", 0);
+            fat = responseJson.optDouble("fat", 0);
+            carbs = responseJson.optDouble("carbs", 0);
+            recommendations = responseJson.optString("recommendations", "No recommendations found");
+            FoodInfo foodInfo = new FoodInfo();
+            foodInfo.setFoodName(foodName);
+            foodInfo.setCalories((int) calories);
+            foodInfo.setProtein((int) protein);
+            foodInfo.setFat((int) fat);
+            foodInfo.setCarbs((int) carbs);
+            foodInfo.setRecommendations(recommendations);
+            return foodInfo;
+
+
+        } catch (JSONException e) {
+            Log.e("GeminiAPI", "JSON parse error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

@@ -82,7 +82,10 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.google.firebase.storage)
 
- 
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+
+
     // Retrofit ve Cloudinary bağımlılıkları
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)

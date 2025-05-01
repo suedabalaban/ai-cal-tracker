@@ -177,7 +177,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/bordered_edittext"
-            android:text="@string/user_note_hint"
+            android:hint="@string/user_note_hint"
             android:minLines="3"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
