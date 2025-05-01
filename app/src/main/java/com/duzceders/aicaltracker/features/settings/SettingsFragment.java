@@ -1,15 +1,21 @@
 package com.duzceders.aicaltracker.features.settings;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
+import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.databinding.FragmentSettingsBinding;
+import com.duzceders.aicaltracker.features.calorie_tracker.CalorieTrackerFragment;
+import com.duzceders.aicaltracker.features.drawer.DrawerActivity;
+import com.duzceders.aicaltracker.product.utils.LanguageHelper;
 
 public class SettingsFragment extends Fragment {
 
@@ -33,6 +39,11 @@ public class SettingsFragment extends Fragment {
         setThemeSwitch(isDarkMode);
 
         setAppTheme();
+
+        setLanguageIcon();
+
+        binding.languageToggleButton.setOnClickListener(v -> showLanguageSelectionDialog());
+
     }
 
     private void setAppTheme() {
@@ -50,5 +61,42 @@ public class SettingsFragment extends Fragment {
         int currentNightMode = requireContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
 
+    }
+    private void setLanguageIcon() {
+        String currentLanguage = LanguageHelper.getLanguage(requireContext());
+        if ("tr".equals(currentLanguage)) {
+            binding.languageFlag.setImageResource(R.drawable.flag_tr);
+        } else {
+            binding.languageFlag.setImageResource(R.drawable.flag_en);
+        }
+    }
+
+    private void showLanguageSelectionDialog() {
+        String[] languages = {
+                getString(R.string.language_en),
+                getString(R.string.language_tr)
+        };
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.language_title))
+                .setItems(languages, (dialog, which) -> {
+                    String selectedLanguage = (which == 0) ? "en" : "tr";
+                    changeLanguage(selectedLanguage);
+                })
+                .create()
+                .show();
+    }
+
+    private void changeLanguage(String languageCode) {
+        if (languageCode.equals(LanguageHelper.getLanguage(requireContext()))) {
+            return; // Aynı dilse bir şey yapma
+        }
+
+        LanguageHelper.setLanguage(requireContext(), languageCode);
+
+        // Ana aktiviteyi yeniden başlatarak dili uygula
+        Intent intent = new Intent(requireContext(), DrawerActivity.class );
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

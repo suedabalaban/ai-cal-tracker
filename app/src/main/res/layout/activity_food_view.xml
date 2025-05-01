@@ -37,19 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mealImageView" />
 
-        <!-- 100gr EditText -->
-        <EditText
-            android:id="@+id/portionEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#000000"
-            android:inputType="number"
-            android:padding="12dp"
-            android:textColorHint="#999999"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/foodNameTextView" />
+
 
         <!-- Toplam Kalori -->
         <TextView
@@ -63,7 +51,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/portionEditText" />
+            app:layout_constraintTop_toBottomOf="@id/foodNameTextView" />
 
         <!-- Makro Değerler (Yanyana) -->
         <LinearLayout
@@ -175,7 +163,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@drawable/bordered_edittext"
-            android:hint="@string/ai_advice_hint"
+            android:text="@string/ai_advice_hint"
             android:minLines="3"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -189,7 +177,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/bordered_edittext"
-            android:hint="@string/user_note_hint"
+            android:text="@string/user_note_hint"
             android:minLines="3"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -229,7 +217,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/analyzeButton" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

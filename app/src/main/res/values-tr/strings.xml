@@ -48,6 +48,10 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+    <string name="login_successful">Giriş başarılı.</string>
+    <string name="login_failed">Giriş başarısız.</string>
+
     <string name="recently_eaten">Geçmiş Öğünler</string>
     <string name="you_haven_t_uploaded_any_food">Henüz herhangi bir yemek yüklemediniz</string>
     <string name="start_tracking_today_s_meals_by_taking_a_quick_pictures">Bugünün öğünlerini takip etmeye başlamak için hızlıca bir fotoğraf çekin</string>
@@ -149,7 +153,7 @@
     <string name="menu_logout">Çıkış Yap</string>
 
     <string name="dish_name">Yemek Adı: </string>
-    <string name="ai_advice_hint">AI recommendation</string>
+    <string name="ai_advice_hint">Yapay zeka önerisi</string>
 
     <string name="user_note_hint">Yemek hakkında not ekleyin..</string>
     <string name="analyze_button">Analiz Et</string>
@@ -166,4 +170,9 @@
     <string name="image_processing_error">Resim işlenirken hata oldu: %1$s</string>
 
     <string name="dark_theme">Karanlık Tema</string>
+    <string name="change_language">Dili Değiştir</string>
+    <string name="language_flag">Dil Bayrağı</string>
+    <string name="language_en">English</string>
+    <string name="language_tr">Türkçe</string>
+    <string name="language_title">Dil Seç</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.duzceders.aicaltracker.features.food_view;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,8 +18,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.duzceders.aicaltracker.R;
+import com.duzceders.aicaltracker.features.auth.EmailPasswordActivity;
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
+import com.duzceders.aicaltracker.product.utils.LanguageHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,33 +36,23 @@ public class FoodViewActivity extends AppCompatActivity {
     private Button saveButton, analyzeButton;
     private ProgressBar analyzeProgressBar;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Önce dil ayarını uygula
+        LanguageHelper.applyLanguage(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_view);
 
         initializeViews();
-        //loadImageFromIntent();
         setListeners();
     }
-
-//    private void loadImageFromIntent() {
-//        String uriString = getIntent().getStringExtra("imageUri");
-//        if (uriString != null) {
-//            Uri imageUri = Uri.parse(uriString);
-//            mealImageView.setImageURI(imageUri);
-//        }
-//    }
-
 
     private void initializeViews() {
         mealImageView = findViewById(R.id.mealImageView);
         //hazır veriyi image olarak ekle
         mealImageView.setImageResource(R.drawable.test_food);
         foodNameTextView = findViewById(R.id.foodNameTextView);
-        portionEditText = findViewById(R.id.portionEditText);
         totalCaloriesText = findViewById(R.id.totalCaloriesText);
         aiAdviceText = findViewById(R.id.aiAdviceText);
         userNoteEditText = findViewById(R.id.userNoteEditText);
@@ -70,9 +63,7 @@ public class FoodViewActivity extends AppCompatActivity {
         proteinTextView = findViewById(R.id.proteinTextView);
         carbTextView = findViewById(R.id.carbTextView);
         fatTextView = findViewById(R.id.fatTextView);
-
     }
-
 
     private void setListeners() {
         saveButton.setOnClickListener(v -> {
@@ -83,6 +74,7 @@ public class FoodViewActivity extends AppCompatActivity {
             analyzeImage();
         });
     }
+
     private void analyzeImage() {
         try {
             Log.d("FoodViewActivity", "analyzeImage metodu çağrıldı");
@@ -94,7 +86,7 @@ public class FoodViewActivity extends AppCompatActivity {
 
             if (bitmap == null) {
                 Log.e("FoodViewActivity", "Resim yüklenemedi");
-                Toast.makeText(FoodViewActivity.this, getString(R.string.image_load_error), Toast.LENGTH_SHORT).show();
+                showToast(getString(R.string.image_load_error));
                 analyzeProgressBar.setVisibility(View.GONE);
                 analyzeButton.setEnabled(true);
                 return;
@@ -106,71 +98,19 @@ public class FoodViewActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
             byte[] byteArray = stream.toByteArray();
 
-
             Log.d("FoodViewActivity", "Resim byte array boyutu: " + byteArray.length + " bytes");
 
-            Toast.makeText(FoodViewActivity.this, getString(R.string.analyzing_image), Toast.LENGTH_SHORT).show();
-            GeminiAPIService.analyzeImage(byteArray, new GeminiAPIService.GeminiCallback() {
+            showToast(getString(R.string.analyzing_image));
+
+            // Context parametresi eklenmiş GeminiAPIService çağrısı
+            GeminiAPIService.analyzeImage(this, byteArray, new GeminiAPIService.GeminiCallback() {
                 @Override
                 public void onSuccess(String result) {
                     Log.d("GeminiAPI", "Response: " + result);
                     runOnUiThread(() -> {
                         analyzeProgressBar.setVisibility(View.GONE);
                         analyzeButton.setEnabled(true);
-                        try {
-                            // İlk olarak ana response'u parse et
-                            JSONObject fullResponse = new JSONObject(result);
-                            String textContent = fullResponse
-                                    .getJSONArray("candidates")
-                                    .getJSONObject(0)
-                                    .getJSONObject("content")
-                                    .getJSONArray("parts")
-                                    .getJSONObject(0)
-                                    .getString("text");
-
-                            // ```json ve ``` gibi code block işaretlerini temizle
-                            String cleanedJson = textContent
-                                    .replace("```json", "")
-                                    .replace("```", "")
-                                    .trim();
-
-                            // Şimdi temizlenmiş JSON'u parse edebilirsin
-                            JSONObject responseJson = new JSONObject(cleanedJson);
-
-                            // JSON içinden verileri oku
-                            String yemekIsmi = responseJson.optString("yemek_ismi", "İsim bulunamadı");
-                            double kalori = responseJson.optDouble("kalori", 0);
-                            double protein = responseJson.optDouble("protein", 0);
-                            double yag = responseJson.optDouble("yağ", 0);
-                            double karbonhidrat = responseJson.optDouble("karbonhidrat", 0);
-                            String oneriler = responseJson.optString("oneriler", "Öneri bulunamadı");
-
-                            // Meal nesnesini oluştur
-                            Meal meal = new Meal();
-                            meal.setMeal_name(yemekIsmi);
-                            meal.setProtein_g((int) protein);
-                            meal.setFat_g((int) yag);
-                            meal.setCarbs_g((int) karbonhidrat);
-                            meal.setCalorie_g((int) kalori);
-
-                            // UI'ı güncelle
-                            foodNameTextView.setText(yemekIsmi);
-                            totalCaloriesText.setText(getString(R.string.total_calories_format, (int) kalori));
-                            aiAdviceText.setText(oneriler);
-
-                            proteinTextView.setText(getString(R.string.protein_format, (int) protein));
-                            carbTextView.setText(getString(R.string.carbs_format, (int) karbonhidrat));
-                            fatTextView.setText(getString(R.string.fat_format, (int) yag));
-
-                            Toast.makeText(FoodViewActivity.this, getString(R.string.analysis_complete), Toast.LENGTH_SHORT).show();
-
-
-                        } catch (JSONException e) {
-                            Log.e("GeminiAPI", "JSON parse error: " + e.getMessage());
-                            e.printStackTrace();
-                            Toast.makeText(FoodViewActivity.this, getString(R.string.data_processing_error), Toast.LENGTH_SHORT).show();
-
-                        }
+                        processGeminiResponse(result);
                     });
                 }
                 @Override
@@ -179,7 +119,7 @@ public class FoodViewActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         analyzeProgressBar.setVisibility(View.GONE);
                         analyzeButton.setEnabled(true);
-                        Toast.makeText(FoodViewActivity.this, getString(R.string.error_message), Toast.LENGTH_SHORT).show();
+                        showToast(getString(R.string.error_message));
                     });
                 }
             });
@@ -189,8 +129,81 @@ public class FoodViewActivity extends AppCompatActivity {
             analyzeButton.setEnabled(true);
             Log.e("FoodViewActivity", "Analiz hatası: " + e.getMessage(), e);
             e.printStackTrace();
-            Toast.makeText(FoodViewActivity.this, getString(R.string.image_processing_error), Toast.LENGTH_SHORT).show();
-
+            showToast(getString(R.string.image_processing_error));
         }
+    }
+
+    // Gemini yanıtını işleme metodu
+    private void processGeminiResponse(String result) {
+        try {
+            // İlk olarak ana response'u parse et
+            JSONObject fullResponse = new JSONObject(result);
+            String textContent = fullResponse
+                    .getJSONArray("candidates")
+                    .getJSONObject(0)
+                    .getJSONObject("content")
+                    .getJSONArray("parts")
+                    .getJSONObject(0)
+                    .getString("text");
+
+            // ```json ve ``` gibi code block işaretlerini temizle
+            String cleanedJson = textContent
+                    .replace("```json", "")
+                    .replace("```", "")
+                    .trim();
+
+            // Temizlenmiş JSON'u parse et
+            JSONObject responseJson = new JSONObject(cleanedJson);
+
+            // Dil kontrolü yaparak uygun alanları oku
+            String currentLanguage = LanguageHelper.getLanguage(this);
+
+            // JSON içinden verileri oku
+            String foodName;
+            double calories, protein, fat, carbs;
+            String recommendations;
+
+            if ("tr".equals(currentLanguage)) {
+                foodName = responseJson.optString("yemek_ismi", "İsim bulunamadı");
+                calories = responseJson.optDouble("kalori", 0);
+                protein = responseJson.optDouble("protein", 0);
+                fat = responseJson.optDouble("yağ", 0);
+                carbs = responseJson.optDouble("karbonhidrat", 0);
+                recommendations = responseJson.optString("oneriler", "Öneri bulunamadı");
+            } else {
+                foodName = responseJson.optString("food_name", "Name not found");
+                calories = responseJson.optDouble("calories", 0);
+                protein = responseJson.optDouble("protein", 0);
+                fat = responseJson.optDouble("fat", 0);
+                carbs = responseJson.optDouble("carbs", 0);
+                recommendations = responseJson.optString("recommendations", "No recommendations found");
+            }
+
+            // Meal nesnesini oluştur
+            Meal meal = new Meal();
+            meal.setMeal_name(foodName);
+            meal.setProtein_g((int) protein);
+            meal.setFat_g((int) fat);
+            meal.setCarbs_g((int) carbs);
+            meal.setCalorie_g((int) calories);
+
+            // UI'ı güncelle
+            foodNameTextView.setText(foodName);
+            totalCaloriesText.setText(getString(R.string.total_calories_format, (int) calories));
+            aiAdviceText.setText(recommendations);
+
+            proteinTextView.setText(getString(R.string.protein_format, (int) protein));
+            carbTextView.setText(getString(R.string.carbs_format, (int) carbs));
+            fatTextView.setText(getString(R.string.fat_format, (int) fat));
+
+            showToast(getString(R.string.analysis_complete));
+        } catch (JSONException e) {
+            Log.e("GeminiAPI", "JSON parse error: " + e.getMessage());
+            e.printStackTrace();
+            showToast(getString(R.string.data_processing_error));
+        }
+    }
+    private void showToast(String message) {
+        Toast.makeText(FoodViewActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }

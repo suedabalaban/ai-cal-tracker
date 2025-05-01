@@ -174,7 +174,7 @@ public class SignUpActivity extends AppCompatActivity {
             // Validate gender selection
             int selectedGenderId = genderGroup.getCheckedRadioButtonId();
             if (selectedGenderId == -1) {
-                Toast.makeText(this, getString(R.string.gender_required), Toast.LENGTH_SHORT).show();
+                showToast(getString(R.string.gender_required));
                 isValid = false;
             }
 
@@ -222,7 +222,7 @@ public class SignUpActivity extends AppCompatActivity {
                 level = ActivityLevel.VERY_ACTIVE;
                 ;
             } else {
-                Toast.makeText(this, getString(R.string.please_select_activity), Toast.LENGTH_SHORT).show();
+                showToast(getString(R.string.please_select_activity));
                 return;
             }
 
@@ -258,7 +258,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                Toast.makeText(SignUpActivity.this, "Sign up failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                showToast(getString(R.string.login_failed));
             }
         });
     }
@@ -307,4 +307,8 @@ public class SignUpActivity extends AppCompatActivity {
     private boolean isValidEmail(String input) {
         return input.matches("^\\S+@\\S+\\.\\S+$");
     }
+    private void showToast(String message) {
+        Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
+
 }
