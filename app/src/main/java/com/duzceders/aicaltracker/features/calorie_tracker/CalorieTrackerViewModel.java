@@ -35,9 +35,7 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
     @Getter
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
-
     private final CloudinaryServiceManager cloudinaryServiceManager;
-
     private final GeminiAPIService geminiService;
 
     public CalorieTrackerViewModel(Application application) {
@@ -45,7 +43,6 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
         this.cloudinaryServiceManager = new CloudinaryServiceManager(application);
         this.geminiService = new GeminiAPIService();
     }
-
 
     public LiveData<User> getUserData() {
         return repository.getUserByUID();
@@ -60,7 +57,6 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
 
         cloudinaryServiceManager.uploadImageFromCamera(image, new CloudinaryServiceManager.CloudinaryUploadCallback() {
-
             @Override
             public void onSuccess(String imageUrl) {
                 imageUrlLiveData.postValue(imageUrl);
@@ -75,16 +71,13 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
                     @Override
                     public void onError(Exception e) {
                         changeLoading();
-
                     }
                 });
-
             }
 
             @Override
             public void onError(String errorMessage) {
                 changeLoading();
-
             }
         }, mealId);
 
@@ -101,7 +94,8 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
                 geminiService.analyzeImage(context, imageBytes, new GeminiAPIService.GeminiCallback() {
                     @Override
                     public void onSuccess(String result) {
-//                        geminiResponseLiveData.postValue(result);
+                        FoodInfo foodInfo = processGeminiResponse(result);
+                        foodInfoLiveData.postValue(foodInfo);
                         changeLoading();
                     }
 
@@ -110,7 +104,6 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
                         changeLoading();
                     }
                 });
-
             }
 
             @Override
@@ -145,7 +138,6 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
             double calories, protein, fat, carbs;
             String recommendations;
 
-
             foodName = responseJson.optString("food_name", "Name not found");
             calories = responseJson.optDouble("calories", 0);
             protein = responseJson.optDouble("protein", 0);
@@ -161,12 +153,10 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
             foodInfo.setRecommendations(recommendations);
             return foodInfo;
 
-
         } catch (JSONException e) {
             Log.e("GeminiAPI", "JSON parse error: " + e.getMessage());
             e.printStackTrace();
         }
-
         return null;
     }
 }
