@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
-
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
@@ -62,7 +61,7 @@ public class CloudinaryServiceManager {
 
     // Galeriden seçilen bir resmi Cloudinary'e yükler
     public void uploadImageFromGallery(Uri imageUri, CloudinaryUploadCallback callback, String mealID) {
-        uploadUri(imageUri, callback,mealID);
+        uploadUri(imageUri, callback, mealID);
     }
 
     private void uploadFile(File file, final CloudinaryUploadCallback callback, String mealId) {
@@ -71,7 +70,7 @@ public class CloudinaryServiceManager {
         try {
             String requestId = MediaManager.get().upload(file.getAbsolutePath())
                     .unsigned("my_preset") // Cloudinary konsolundan oluşturduğunuz preset adını buraya yazın
-                    .option("public_id", "user_images/" + userId + "/" + mealId)
+                    .option("public_id", userId + "/meals/" + mealId)
                     .callback(new UploadCallback() {
                         @Override
                         public void onStart(String requestId) {
@@ -114,12 +113,12 @@ public class CloudinaryServiceManager {
         } catch (Exception e) {
             Log.e(TAG, "Unsigned upload exception", e);
             // Hata durumunda signed upload deneyelim
-            uploadFileSigned(file, callback,mealId);
+            uploadFileSigned(file, callback, mealId);
         }
     }
 
     // İmzalı (signed) yükleme metodu - Upload preset gerektirmez
-    private void uploadFileSigned(File file, final CloudinaryUploadCallback callback,String mealId) {
+    private void uploadFileSigned(File file, final CloudinaryUploadCallback callback, String mealId) {
         try {
             String userId = firebaseRepository.getCurrentUserId();
             Map<String, Object> options = new HashMap<>();
@@ -197,7 +196,7 @@ public class CloudinaryServiceManager {
                             Log.e(TAG, "Upload error: " + error.getDescription());
 
                             // Urisigned upload başarısız olursa signed upload deneyelim
-                            uploadUriSigned(uri, callback,mealID);
+                            uploadUriSigned(uri, callback, mealID);
                         }
 
                         @Override

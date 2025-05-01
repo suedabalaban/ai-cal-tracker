@@ -22,7 +22,6 @@ import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 public class FirebaseRepository {
 
@@ -63,13 +62,13 @@ public class FirebaseRepository {
         });
     }
 
-    public void addMeal(Meal meal) {
+    public void addMeal(Meal meal, String mealId) {
         String userId = getCurrentUserId();
         if (userId == null) {
             Log.e(TAG, "User not authenticated");
             return;
         }
-        String mealId = UUID.randomUUID().toString();
+
         db.collection("users").document(userId).collection("meals").document(mealId).set(meal).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

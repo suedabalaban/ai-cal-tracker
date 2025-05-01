@@ -13,6 +13,7 @@ public class Meal {
     private MealType meal_type;
     private String image_url;
     private String user_note;
+    private String recommendations;
 
     private double protein_g;
     private double fat_g;
