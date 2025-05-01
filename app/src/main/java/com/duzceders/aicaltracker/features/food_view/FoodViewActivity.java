@@ -50,15 +50,12 @@ public class FoodViewActivity extends AppCompatActivity {
 
     private void initializeViews() {
         mealImageView = findViewById(R.id.mealImageView);
-        //hazır veriyi image olarak ekle
-        mealImageView.setImageResource(R.drawable.test_food);
+        /// intent ile gelen veriyi buraya ekle
         foodNameTextView = findViewById(R.id.foodNameTextView);
         totalCaloriesText = findViewById(R.id.totalCaloriesText);
         aiAdviceText = findViewById(R.id.aiAdviceText);
         userNoteEditText = findViewById(R.id.userNoteEditText);
         saveButton = findViewById(R.id.saveButton);
-        analyzeButton = findViewById(R.id.analyzeButton);
-        analyzeProgressBar = findViewById(R.id.analyzeProgressBar);
 
         proteinTextView = findViewById(R.id.proteinTextView);
         carbTextView = findViewById(R.id.carbTextView);

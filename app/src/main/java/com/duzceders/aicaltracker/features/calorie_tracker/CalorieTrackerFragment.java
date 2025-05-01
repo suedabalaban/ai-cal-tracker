@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.databinding.FragmentCalorieTrackerBinding;
+import com.duzceders.aicaltracker.features.food_view.FoodViewActivity;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.manager.CloudinaryServiceManager;
@@ -125,6 +126,8 @@ public class CalorieTrackerFragment extends Fragment {
         final boolean[] isFabOpen = {false};
 
         fabMain.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), FoodViewActivity.class);
+            startActivity(intent);
             int visibility = isFabOpen[0] ? View.GONE : View.VISIBLE;
             fabCamera.setVisibility(visibility);
             fabGallery.setVisibility(visibility);
@@ -163,6 +166,7 @@ public class CalorieTrackerFragment extends Fragment {
             Bitmap photo = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
             if (photo == null) return;
             showToast(getString(R.string.image_uploading));
+            /// add gemini method here
             uploadImageToCloudinaryFromCamera(photo);
         }
 
@@ -171,6 +175,7 @@ public class CalorieTrackerFragment extends Fragment {
             if (selectedImageUri == null) return;
 
             showToast(getString(R.string.image_uploading));
+            /// add gemini method here
             uploadImageToCloudinaryFromGallery(selectedImageUri);
         }
     }
