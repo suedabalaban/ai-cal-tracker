@@ -18,7 +18,7 @@ public class Meal {
     private double protein_g;
     private double fat_g;
     private double carbs_g;
-    private double calorie_g;
+    private double calorie_kcal;
 
     private Timestamp meal_time;
 
