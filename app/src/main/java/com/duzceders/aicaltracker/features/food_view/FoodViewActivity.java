@@ -1,208 +1,108 @@
 package com.duzceders.aicaltracker.features.food_view;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.duzceders.aicaltracker.R;
-import com.duzceders.aicaltracker.features.auth.EmailPasswordActivity;
+import com.duzceders.aicaltracker.databinding.ActivityFoodViewBinding;
+import com.duzceders.aicaltracker.product.models.FoodInfo;
 import com.duzceders.aicaltracker.product.models.Meal;
+import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.UserField;
+import com.duzceders.aicaltracker.product.parser.MealIDParser;
+import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
 import com.duzceders.aicaltracker.product.utils.LanguageHelper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-
 public class FoodViewActivity extends AppCompatActivity {
 
-    private ImageView mealImageView;
-    private TextView foodNameTextView, totalCaloriesText, proteinTextView, carbTextView, fatTextView;
-    private EditText portionEditText, aiAdviceText, userNoteEditText;
-    private Button saveButton, analyzeButton;
-    private ProgressBar analyzeProgressBar;
+    private ActivityFoodViewBinding binding;
+
+
+    private GeminiAPIService geminiAPIService;
+    private FirebaseRepository firebaseRepository;
+    private FoodViewActivityViewModel viewModel;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Önce dil ayarını uygula
         LanguageHelper.applyLanguage(this);
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_food_view);
+        viewModel = new ViewModelProvider(this).get(FoodViewActivityViewModel.class);
+        binding = ActivityFoodViewBinding.inflate(getLayoutInflater());
+        firebaseRepository = new FirebaseRepository();
+        getUserInfo();
+        setContentView(binding.getRoot());
+        String imageUrl = getIntent().getStringExtra("imageUrl");
+        FoodInfo foodInfo = (FoodInfo) getIntent().getSerializableExtra("foodInfo");
 
-        initializeViews();
-        setListeners();
+        setListeners(foodInfo);
+
+        if (imageUrl != null) {
+            Glide.with(this).load(imageUrl).into(binding.mealImageView);
+        } else {
+            binding.mealImageView.setImageResource(R.drawable.test_food);
+        }
+
+        setFoodInfo(foodInfo);
     }
 
-    private void initializeViews() {
-        mealImageView = findViewById(R.id.mealImageView);
-        //hazır veriyi image olarak ekle
-        mealImageView.setImageResource(R.drawable.test_food);
-        foodNameTextView = findViewById(R.id.foodNameTextView);
-        totalCaloriesText = findViewById(R.id.totalCaloriesText);
-        aiAdviceText = findViewById(R.id.aiAdviceText);
-        userNoteEditText = findViewById(R.id.userNoteEditText);
-        saveButton = findViewById(R.id.saveButton);
-        analyzeButton = findViewById(R.id.analyzeButton);
-        analyzeProgressBar = findViewById(R.id.analyzeProgressBar);
-
-        proteinTextView = findViewById(R.id.proteinTextView);
-        carbTextView = findViewById(R.id.carbTextView);
-        fatTextView = findViewById(R.id.fatTextView);
-    }
-
-    private void setListeners() {
-        saveButton.setOnClickListener(v -> {
-            String foodName = foodNameTextView.getText().toString();
-            String userNote = userNoteEditText.getText().toString();
-        });
-        analyzeButton.setOnClickListener(view -> {
-            analyzeImage();
-        });
-    }
-
-    private void analyzeImage() {
-        try {
-            Log.d("FoodViewActivity", "analyzeImage metodu çağrıldı");
-
-            analyzeProgressBar.setVisibility(View.VISIBLE);
-            analyzeButton.setEnabled(false);
-
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_food);
-
-            if (bitmap == null) {
-                Log.e("FoodViewActivity", "Resim yüklenemedi");
-                showToast(getString(R.string.image_load_error));
-                analyzeProgressBar.setVisibility(View.GONE);
-                analyzeButton.setEnabled(true);
-                return;
-            }
-
-            Log.d("FoodViewActivity", "Bitmap boyutu: " + bitmap.getWidth() + "x" + bitmap.getHeight());
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-            byte[] byteArray = stream.toByteArray();
-
-            Log.d("FoodViewActivity", "Resim byte array boyutu: " + byteArray.length + " bytes");
-
-            showToast(getString(R.string.analyzing_image));
-
-            // Context parametresi eklenmiş GeminiAPIService çağrısı
-            GeminiAPIService.analyzeImage(this, byteArray, new GeminiAPIService.GeminiCallback() {
-                @Override
-                public void onSuccess(String result) {
-                    Log.d("GeminiAPI", "Response: " + result);
-                    runOnUiThread(() -> {
-                        analyzeProgressBar.setVisibility(View.GONE);
-                        analyzeButton.setEnabled(true);
-                        processGeminiResponse(result);
-                    });
-                }
-                @Override
-                public void onError(Exception e) {
-                    Log.e("GeminiAPI", "Error: " + e.getMessage());
-                    runOnUiThread(() -> {
-                        analyzeProgressBar.setVisibility(View.GONE);
-                        analyzeButton.setEnabled(true);
-                        showToast(getString(R.string.error_message));
-                    });
-                }
-            });
-
-        } catch (Exception e) {
-            analyzeProgressBar.setVisibility(View.GONE);
-            analyzeButton.setEnabled(true);
-            Log.e("FoodViewActivity", "Analiz hatası: " + e.getMessage(), e);
-            e.printStackTrace();
-            showToast(getString(R.string.image_processing_error));
+    private void setFoodInfo(FoodInfo foodInfo) {
+        if (foodInfo == null) Log.e("FoodViewActivity", "FoodInfo is null");
+        else {
+            binding.foodNameTextView.setText(foodInfo.getFoodName());
+            binding.totalCaloriesText.setText(getString(R.string.total_calories_format, foodInfo.getCalories()));
+            binding.aiAdviceText.setText(foodInfo.getRecommendations());
+            binding.proteinTextView.setText(getString(R.string.protein_format, foodInfo.getProtein()));
+            binding.carbTextView.setText(getString(R.string.carbs_format, foodInfo.getCarbs()));
+            binding.fatTextView.setText(getString(R.string.fat_format, foodInfo.getFat()));
         }
     }
 
-    // Gemini yanıtını işleme metodu
-    private void processGeminiResponse(String result) {
-        try {
-            // İlk olarak ana response'u parse et
-            JSONObject fullResponse = new JSONObject(result);
-            String textContent = fullResponse
-                    .getJSONArray("candidates")
-                    .getJSONObject(0)
-                    .getJSONObject("content")
-                    .getJSONArray("parts")
-                    .getJSONObject(0)
-                    .getString("text");
-
-            // ```json ve ``` gibi code block işaretlerini temizle
-            String cleanedJson = textContent
-                    .replace("```json", "")
-                    .replace("```", "")
-                    .trim();
-
-            // Temizlenmiş JSON'u parse et
-            JSONObject responseJson = new JSONObject(cleanedJson);
-
-            // Dil kontrolü yaparak uygun alanları oku
-            String currentLanguage = LanguageHelper.getLanguage(this);
-
-            // JSON içinden verileri oku
-            String foodName;
-            double calories, protein, fat, carbs;
-            String recommendations;
-
-            if ("tr".equals(currentLanguage)) {
-                foodName = responseJson.optString("yemek_ismi", "İsim bulunamadı");
-                calories = responseJson.optDouble("kalori", 0);
-                protein = responseJson.optDouble("protein", 0);
-                fat = responseJson.optDouble("yağ", 0);
-                carbs = responseJson.optDouble("karbonhidrat", 0);
-                recommendations = responseJson.optString("oneriler", "Öneri bulunamadı");
+    private void getUserInfo() {
+        viewModel.getUserData().observe(this, user -> {
+            if (user != null) {
+                this.user = user;
             } else {
-                foodName = responseJson.optString("food_name", "Name not found");
-                calories = responseJson.optDouble("calories", 0);
-                protein = responseJson.optDouble("protein", 0);
-                fat = responseJson.optDouble("fat", 0);
-                carbs = responseJson.optDouble("carbs", 0);
-                recommendations = responseJson.optString("recommendations", "No recommendations found");
+                showToast("User data is null");
             }
-
-            // Meal nesnesini oluştur
-            Meal meal = new Meal();
-            meal.setMeal_name(foodName);
-            meal.setProtein_g((int) protein);
-            meal.setFat_g((int) fat);
-            meal.setCarbs_g((int) carbs);
-            meal.setCalorie_g((int) calories);
-
-            // UI'ı güncelle
-            foodNameTextView.setText(foodName);
-            totalCaloriesText.setText(getString(R.string.total_calories_format, (int) calories));
-            aiAdviceText.setText(recommendations);
-
-            proteinTextView.setText(getString(R.string.protein_format, (int) protein));
-            carbTextView.setText(getString(R.string.carbs_format, (int) carbs));
-            fatTextView.setText(getString(R.string.fat_format, (int) fat));
-
-            showToast(getString(R.string.analysis_complete));
-        } catch (JSONException e) {
-            Log.e("GeminiAPI", "JSON parse error: " + e.getMessage());
-            e.printStackTrace();
-            showToast(getString(R.string.data_processing_error));
-        }
+        });
     }
+
+    private void setListeners(FoodInfo foodInfo) {
+        binding.saveButton.setOnClickListener(v -> {
+            Meal meal = new Meal();
+            meal.setMeal_name(binding.foodNameTextView.getText().toString());
+            ///add meal type logic
+            meal.setImage_url(getIntent().getStringExtra("imageUrl"));
+            meal.setUser_note(binding.userNoteEditText.getText().toString());
+            meal.setProtein_g(foodInfo.getProtein());
+            meal.setFat_g(foodInfo.getFat());
+            meal.setCarbs_g(foodInfo.getCarbs());
+            meal.setCalorie_kcal(foodInfo.getCalories());
+            meal.setMeal_time(new com.google.firebase.Timestamp(new java.util.Date()));
+            meal.setRecommendations(foodInfo.getRecommendations());
+
+            String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
+
+
+            firebaseRepository.updateUser(UserField.DAILY_CALORIE_NEEDS_LEFT, (user.getDaily_calorie_needs_left() - foodInfo.getCalories()));
+            firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_CARBS_LEFT_G, (user.getDaily_macros().getDaily_carbs_left_g() - foodInfo.getCarbs()));
+            firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_FATS_LEFT_G, (user.getDaily_macros().getDaily_fats_left_g() - foodInfo.getFat()));
+            firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_PROTEINS_LEFT_G, (user.getDaily_macros().getDaily_proteins_left_g() - foodInfo.getProtein()));
+
+            firebaseRepository.addMeal(meal, mealID);
+
+            finish();
+            /// drawer activity tekrar tetiklenmeli
+        });
+    }
+
     private void showToast(String message) {
         Toast.makeText(FoodViewActivity.this, message, Toast.LENGTH_SHORT).show();
     }

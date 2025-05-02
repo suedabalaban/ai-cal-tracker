@@ -20,9 +20,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
+import java.util.List;
 
 public class FirebaseRepository {
 
@@ -63,13 +64,13 @@ public class FirebaseRepository {
         });
     }
 
-    public void addMeal(Meal meal) {
+    public void addMeal(Meal meal, String mealId) {
         String userId = getCurrentUserId();
         if (userId == null) {
             Log.e(TAG, "User not authenticated");
             return;
         }
-        String mealId = UUID.randomUUID().toString();
+
         db.collection("users").document(userId).collection("meals").document(mealId).set(meal).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -127,6 +128,29 @@ public class FirebaseRepository {
         });
     }
 
+    public void getUserMeals(MealCallback callback) {
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated");
+            callback.onFailure(new Exception("User not authenticated"));
+            return;
+        }
+        db.collection("users").document(userId).collection("meals").get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.isEmpty()) {
+                Log.e(TAG, "No meals found for user");
+                callback.onFailure(new Exception("No meals found for user"));
+                return;
+            } else {
+                List<Meal> meals = documentSnapshot.toObjects(Meal.class);
+                callback.onMealsReceived(meals);
+            }
+
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Error getting user's meals", e);
+            callback.onFailure(e);
+        });
+
+    }
 
     public void runDailyNeedsTask() {
         String userId = getCurrentUserId();
@@ -232,6 +256,12 @@ public class FirebaseRepository {
 
     public interface UserCallback {
         void onUserReceived(User user);
+
+        void onFailure(Exception e);
+    }
+
+    public interface MealCallback {
+        void onMealsReceived(List<Meal> meals);
 
         void onFailure(Exception e);
     }
