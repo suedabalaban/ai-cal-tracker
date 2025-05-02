@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,16 +29,14 @@ import com.duzceders.aicaltracker.features.calorie_tracker.factory.CalorieTracke
 import com.duzceders.aicaltracker.features.food_view.FoodViewActivity;
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
-import com.duzceders.aicaltracker.product.models.enums.MealType;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.widgets.LoadingDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.Timestamp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CalorieTrackerFragment extends Fragment {
@@ -53,6 +50,7 @@ public class CalorieTrackerFragment extends Fragment {
 
     private static final String TAG = "CalorieTrackerFragment";
 
+    private FirebaseRepository firebaseRepository;
     private CalorieTrackerViewModel viewModel;
 
     private LoadingDialog loadingDialog;
@@ -61,7 +59,7 @@ public class CalorieTrackerFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(requireContext());
-        FirebaseRepository firebaseRepository = new FirebaseRepository();
+        firebaseRepository = new FirebaseRepository();
         viewModel = new ViewModelProvider(this, new CalorieTrackerViewModelFactory(requireActivity().getApplication())).get(CalorieTrackerViewModel.class);
 
 
@@ -106,6 +104,31 @@ public class CalorieTrackerFragment extends Fragment {
         setClickListeners();
         setRecyclerView();
     }
+
+    private void setRecyclerView() {
+
+        firebaseRepository.getUserMeals(new FirebaseRepository.MealCallback() {
+            @Override
+            public void onMealsReceived(List<Meal> meals) {
+
+                binding.startTrackingLabel.setVisibility(View.GONE);
+                binding.recyclerView.setVisibility(View.VISIBLE);
+                MealAdapter mealAdapter = new MealAdapter(meals, requireContext());
+
+                binding.recyclerView.setAdapter(mealAdapter);
+
+                binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                binding.startTrackingLabel.setVisibility(View.VISIBLE);
+                binding.recyclerView.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
 
     private void updateUiWithUserData(User user) {
         String welcomeMessage = getResources().getString(R.string.welcome, user.getName() + " " + user.getSurname());
@@ -219,18 +242,6 @@ public class CalorieTrackerFragment extends Fragment {
         }
     }
 
-    private void setRecyclerView() {
-        ArrayList<Meal> mealList = new ArrayList<>();
-        mealList.add(new Meal("Sabah Kahvaltısı", MealType.LAUNCH, "https://picsum.photos/200/300", "Yemek çok güzeldi", 10, 1, 2, 3, Timestamp.now()));
-        mealList.add(new Meal("Öğle Yemeği", MealType.LAUNCH, "https://picsum.photos/200/300", "Yemek çok güzeldi", 10, 1, 2, 3, Timestamp.now()));
-        mealList.add(new Meal("Akşam Yemeği", MealType.LAUNCH, "https://picsum.photos/200/300", "Yemek çok güzeldi", 10, 1, 2, 3, Timestamp.now()));
-        Log.d(TAG, "Meal List: " + mealList.toString());
-        MealAdapter mealAdapter = new MealAdapter(mealList);
-
-        binding.recyclerView.setAdapter(mealAdapter);
-
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
