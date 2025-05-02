@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,19 +21,25 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.databinding.FragmentCalorieTrackerBinding;
+import com.duzceders.aicaltracker.features.calorie_tracker.adapter.MealAdapter;
 import com.duzceders.aicaltracker.features.calorie_tracker.factory.CalorieTrackerViewModelFactory;
 import com.duzceders.aicaltracker.features.food_view.FoodViewActivity;
+import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.MealType;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.widgets.LoadingDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.Timestamp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class CalorieTrackerFragment extends Fragment {
@@ -56,6 +63,8 @@ public class CalorieTrackerFragment extends Fragment {
         FirebaseApp.initializeApp(requireContext());
         FirebaseRepository firebaseRepository = new FirebaseRepository();
         viewModel = new ViewModelProvider(this, new CalorieTrackerViewModelFactory(requireActivity().getApplication())).get(CalorieTrackerViewModel.class);
+
+
         loadingDialog = new LoadingDialog(requireContext());
         Intent intent = new Intent(getContext(), FoodViewActivity.class);
 
@@ -95,6 +104,7 @@ public class CalorieTrackerFragment extends Fragment {
         });
 
         setClickListeners();
+        setRecyclerView();
     }
 
     private void updateUiWithUserData(User user) {
@@ -209,6 +219,18 @@ public class CalorieTrackerFragment extends Fragment {
         }
     }
 
+    private void setRecyclerView() {
+        ArrayList<Meal> mealList = new ArrayList<>();
+        mealList.add(new Meal("Sabah Kahvaltısı", MealType.LAUNCH, "https://picsum.photos/200/300", "Yemek çok güzeldi", 10, 1, 2, 3, Timestamp.now()));
+        mealList.add(new Meal("Öğle Yemeği", MealType.LAUNCH, "https://picsum.photos/200/300", "Yemek çok güzeldi", 10, 1, 2, 3, Timestamp.now()));
+        mealList.add(new Meal("Akşam Yemeği", MealType.LAUNCH, "https://picsum.photos/200/300", "Yemek çok güzeldi", 10, 1, 2, 3, Timestamp.now()));
+        Log.d(TAG, "Meal List: " + mealList.toString());
+        MealAdapter mealAdapter = new MealAdapter(mealList);
+
+        binding.recyclerView.setAdapter(mealAdapter);
+
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
