@@ -131,13 +131,12 @@ public class CalorieTrackerFragment extends Fragment {
 
 
     private void updateUiWithUserData(User user) {
-        String welcomeMessage = getResources().getString(R.string.welcome, user.getName() + " " + user.getSurname());
-//        binding.welcomeText.setText(welcomeMessage);
 
-        binding.totalCaloriesValue.setText(String.valueOf(user.getDaily_calorie_needs_left()));
-        binding.totalProteinValue.setText(String.valueOf(user.getDaily_macros().getDaily_proteins_left_g()));
-        binding.totalCarbsValue.setText(String.valueOf(user.getDaily_macros().getDaily_carbs_left_g()));
-        binding.totalFatsValue.setText(String.valueOf(user.getDaily_macros().getDaily_fats_left_g()));
+
+        binding.totalCaloriesValue.setText(String.valueOf(Math.max(user.getDaily_calorie_needs_left(), 0)));
+        binding.totalProteinValue.setText(String.valueOf(Math.max(user.getDaily_macros().getDaily_proteins_left_g(), 0)));
+        binding.totalCarbsValue.setText(String.valueOf(Math.max(user.getDaily_macros().getDaily_carbs_left_g(), 0)));
+        binding.totalFatsValue.setText(String.valueOf(Math.max(user.getDaily_macros().getDaily_fats_left_g(), 0)));
 
         int progressCalories = calculateProgress(user.getDaily_calorie_needs_left(), user.getDaily_calorie_needs());
         int progressProtein = calculateProgress(user.getDaily_macros().getDaily_proteins_left_g(), user.getDaily_macros().getDaily_proteins_need_g());
