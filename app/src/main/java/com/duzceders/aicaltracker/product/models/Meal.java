@@ -3,12 +3,18 @@ package com.duzceders.aicaltracker.product.models;
 import com.duzceders.aicaltracker.product.models.enums.MealType;
 import com.google.firebase.Timestamp;
 
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Meal {
+public class Meal implements Serializable {
+
     private String meal_name;
     private MealType meal_type;
     private String image_url;
@@ -20,12 +26,13 @@ public class Meal {
     private double carbs_g;
     private double calorie_kcal;
 
-    private Timestamp meal_time;
+    private long meal_time;
+
 
     public Meal() {
     }
 
-    public Meal(String meal_name, MealType meal_type, String image_url, String user_note, double protein_g, double fat_g, double carbs_g, double calorie_kcal, Timestamp meal_time) {
+    public Meal(String meal_name, MealType meal_type, String image_url, String user_note, double protein_g, double fat_g, double carbs_g, double calorie_kcal, long meal_time) {
         this.meal_name = meal_name;
         this.meal_type = meal_type;
         this.image_url = image_url;
@@ -36,6 +43,11 @@ public class Meal {
         this.calorie_kcal = calorie_kcal;
         this.meal_time = meal_time;
     }
+
+    public String getMealTimeAsTimestamp() {
+        Timestamp timestamp = new Timestamp(Instant.ofEpochSecond(meal_time));
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(timestamp);
+
+    }
 }
-
-

@@ -19,6 +19,8 @@ import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
 import com.duzceders.aicaltracker.product.utils.LanguageHelper;
 
+import java.time.Instant;
+
 public class FoodViewActivity extends AppCompatActivity {
 
     private ActivityFoodViewBinding binding;
@@ -85,7 +87,7 @@ public class FoodViewActivity extends AppCompatActivity {
             meal.setFat_g(foodInfo.getFat());
             meal.setCarbs_g(foodInfo.getCarbs());
             meal.setCalorie_kcal(foodInfo.getCalories());
-            meal.setMeal_time(new com.google.firebase.Timestamp(new java.util.Date()));
+            meal.setMeal_time(System.currentTimeMillis());
             meal.setRecommendations(foodInfo.getRecommendations());
 
             String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
