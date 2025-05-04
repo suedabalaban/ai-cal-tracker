@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.duzceders.aicaltracker.product.models.FoodInfo;
+import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
@@ -21,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.UUID;
 
 import lombok.Getter;
@@ -46,6 +48,14 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
     public LiveData<User> getUserData() {
         return repository.getUserByUID();
+    }
+
+    public LiveData<List<Meal>> getMeals() {
+        return repository.getUserMealsLiveData();
+    }
+
+    public void refreshMeals() {
+        repository.fetchUserMeals();
     }
 
     public void analyzeImageFromCamera(Bitmap image, Context context) {
@@ -158,5 +168,12 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.removeUserListener();
+        repository.removeMealsListener();
     }
 }

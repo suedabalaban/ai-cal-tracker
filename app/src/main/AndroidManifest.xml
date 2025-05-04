@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AICALTRACKER"
         tools:targetApi="31">
+        <activity
+            android:name=".features.food_detail.FoodDetailActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -34,7 +37,6 @@
             android:exported="false"
             android:label="@string/title_activity_drawer"
             android:theme="@style/Theme.AICALTRACKER.NoActionBar" />
-
         <activity
             android:name=".features.auth.SignUpActivity"
             android:exported="false" />
@@ -50,11 +52,12 @@
         </activity>
         <activity
             android:name=".features.food_view.FoodViewActivity"
-            android:exported="true" >
-        <intent-filter>
-            <action android:name="com.duzceders.aicaltracker.food_view.VIEW_FOOD" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.duzceders.aicaltracker.food_view.VIEW_FOOD" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 

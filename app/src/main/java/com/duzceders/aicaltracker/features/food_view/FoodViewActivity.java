@@ -13,11 +13,15 @@ import com.duzceders.aicaltracker.databinding.ActivityFoodViewBinding;
 import com.duzceders.aicaltracker.product.models.FoodInfo;
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.MealType;
 import com.duzceders.aicaltracker.product.models.enums.UserField;
 import com.duzceders.aicaltracker.product.parser.MealIDParser;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
 import com.duzceders.aicaltracker.product.utils.LanguageHelper;
+import com.google.firebase.Timestamp;
+
+import java.time.LocalTime;
 
 public class FoodViewActivity extends AppCompatActivity {
 
@@ -78,18 +82,19 @@ public class FoodViewActivity extends AppCompatActivity {
         binding.saveButton.setOnClickListener(v -> {
             Meal meal = new Meal();
             meal.setMeal_name(binding.foodNameTextView.getText().toString());
-            ///add meal type logic
             meal.setImage_url(getIntent().getStringExtra("imageUrl"));
             meal.setUser_note(binding.userNoteEditText.getText().toString());
             meal.setProtein_g(foodInfo.getProtein());
             meal.setFat_g(foodInfo.getFat());
             meal.setCarbs_g(foodInfo.getCarbs());
             meal.setCalorie_kcal(foodInfo.getCalories());
-            meal.setMeal_time(new com.google.firebase.Timestamp(new java.util.Date()));
+            meal.setMeal_time(Timestamp.now());
             meal.setRecommendations(foodInfo.getRecommendations());
+            MealType mealType = checkMealType(LocalTime.now());
+            meal.setMeal_type(getString(mealType.mealTypeId));
 
             String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
-
+            meal.setId(mealID);
 
             firebaseRepository.updateUser(UserField.DAILY_CALORIE_NEEDS_LEFT, (user.getDaily_calorie_needs_left() - foodInfo.getCalories()));
             firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_CARBS_LEFT_G, (user.getDaily_macros().getDaily_carbs_left_g() - foodInfo.getCarbs()));
@@ -97,11 +102,23 @@ public class FoodViewActivity extends AppCompatActivity {
             firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_PROTEINS_LEFT_G, (user.getDaily_macros().getDaily_proteins_left_g() - foodInfo.getProtein()));
 
             firebaseRepository.addMeal(meal, mealID);
-
             finish();
-            /// drawer activity tekrar tetiklenmeli
         });
     }
+
+    private MealType checkMealType(LocalTime time) {
+        LocalTime noon = LocalTime.NOON; // 12:00
+        LocalTime sixPm = LocalTime.of(18, 0); // 18:00
+
+        if (time.isBefore(noon)) {
+            return MealType.BREAKFAST;
+        } else if (time.isBefore(sixPm)) {
+            return MealType.LAUNCH;
+        } else {
+            return MealType.DINNER;
+        }
+    }
+
 
     private void showToast(String message) {
         Toast.makeText(FoodViewActivity.this, message, Toast.LENGTH_SHORT).show();

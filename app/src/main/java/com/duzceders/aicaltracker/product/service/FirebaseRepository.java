@@ -18,9 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +30,9 @@ public class FirebaseRepository {
     public static final String TAG = "FirebaseRepository";
     private final FirebaseFirestore db;
     private final FirebaseAuth auth;
+    private ListenerRegistration userListener;
+    private ListenerRegistration mealsListener;
+    private final MutableLiveData<List<Meal>> mealsLiveData = new MutableLiveData<>();
 
     public FirebaseRepository() {
         FirebaseServiceManager manager = FirebaseServiceManager.getInstance();
@@ -75,6 +78,7 @@ public class FirebaseRepository {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "DocumentSnapshot successfully written!");
+                fetchUserMeals();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -88,22 +92,43 @@ public class FirebaseRepository {
     public LiveData<User> getUserByUID() {
         MutableLiveData<User> userLiveData = new MutableLiveData<>();
         String userId = getCurrentUserId();
+
         if (userId == null) {
             Log.e(TAG, "User not authenticated");
             userLiveData.setValue(null);
             return userLiveData;
         }
-        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                User user = documentSnapshot.toObject(User.class);
+
+        userListener = db.collection("users").document(userId).addSnapshotListener((snapshot, e) -> {
+            if (e != null) {
+                Log.e(TAG, "Firestore listener error: ", e);
+                userLiveData.setValue(null);
+                return;
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                User user = snapshot.toObject(User.class);
                 userLiveData.setValue(user);
             } else {
                 userLiveData.setValue(null);
             }
-        }).addOnFailureListener(e -> {
-            userLiveData.setValue(null);
         });
+
         return userLiveData;
+    }
+
+    public void removeUserListener() {
+        if (userListener != null) {
+            userListener.remove();
+            userListener = null;
+        }
+    }
+
+    public void removeMealsListener() {
+        if (mealsListener != null) {
+            mealsListener.remove();
+            mealsListener = null;
+        }
     }
 
     public void getUserInformation(UserCallback callback) {
@@ -128,29 +153,60 @@ public class FirebaseRepository {
         });
     }
 
-    public void getUserMeals(MealCallback callback) {
+    public LiveData<List<Meal>> getUserMealsLiveData() {
+        fetchUserMeals();
+        return mealsLiveData;
+    }
+
+    public void fetchUserMeals() {
         String userId = getCurrentUserId();
         if (userId == null) {
             Log.e(TAG, "User not authenticated");
-            callback.onFailure(new Exception("User not authenticated"));
+            mealsLiveData.setValue(null);
             return;
         }
-        db.collection("users").document(userId).collection("meals").get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.isEmpty()) {
-                Log.e(TAG, "No meals found for user");
-                callback.onFailure(new Exception("No meals found for user"));
+
+        if (mealsListener != null) {
+            mealsListener.remove();
+        }
+
+        mealsListener = db.collection("users").document(userId).collection("meals").addSnapshotListener((snapshot, e) -> {
+            if (e != null) {
+                Log.e(TAG, "Listen failed.", e);
                 return;
-            } else {
-                List<Meal> meals = documentSnapshot.toObjects(Meal.class);
-                callback.onMealsReceived(meals);
             }
 
+            if (snapshot != null && !snapshot.isEmpty()) {
+                List<Meal> meals = snapshot.toObjects(Meal.class);
+                mealsLiveData.setValue(meals);
+            } else {
+                Log.d(TAG, "No meals found for user");
+                mealsLiveData.setValue(null);
+            }
+        });
+    }
+
+    public void getMealById(String id, MealCallback callback) {
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated");
+            return;
+        }
+
+        db.collection("users").document(userId).collection("meals").document(id).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Meal meal = documentSnapshot.toObject(Meal.class);
+                callback.onMealReceived(meal);
+            } else {
+                Log.e(TAG, "Meal not found");
+                callback.onFailure(new Exception("Meal not found"));
+            }
         }).addOnFailureListener(e -> {
-            Log.e(TAG, "Error getting user's meals", e);
+            Log.e(TAG, "Error getting meal", e);
             callback.onFailure(e);
         });
-
     }
+
 
     public void runDailyNeedsTask() {
         String userId = getCurrentUserId();
@@ -261,7 +317,7 @@ public class FirebaseRepository {
     }
 
     public interface MealCallback {
-        void onMealsReceived(List<Meal> meals);
+        void onMealReceived(Meal meal);
 
         void onFailure(Exception e);
     }
