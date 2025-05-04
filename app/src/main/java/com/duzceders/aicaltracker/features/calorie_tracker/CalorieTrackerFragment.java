@@ -50,9 +50,7 @@ public class CalorieTrackerFragment extends Fragment {
 
     private static final String TAG = "CalorieTrackerFragment";
 
-    private FirebaseRepository firebaseRepository;
     private CalorieTrackerViewModel viewModel;
-
     private LoadingDialog loadingDialog;
     private MealAdapter mealAdapter;
 
@@ -60,7 +58,6 @@ public class CalorieTrackerFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(requireContext());
-        firebaseRepository = new FirebaseRepository();
         viewModel = new ViewModelProvider(this, new CalorieTrackerViewModelFactory(requireActivity().getApplication())).get(CalorieTrackerViewModel.class);
 
 

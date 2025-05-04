@@ -66,10 +66,9 @@ public class CloudinaryServiceManager {
 
     private void uploadFile(File file, final CloudinaryUploadCallback callback, String mealId) {
         String userId = firebaseRepository.getCurrentUserId();
-        // 1. Yöntem: Unsigned upload (Upload preset gerektirir)
         try {
             String requestId = MediaManager.get().upload(file.getAbsolutePath())
-                    .unsigned("my_preset") // Cloudinary konsolundan oluşturduğunuz preset adını buraya yazın
+                    .unsigned("my_preset")
                     .option("public_id", userId + "/meals/" + mealId)
                     .callback(new UploadCallback() {
                         @Override
@@ -126,7 +125,7 @@ public class CloudinaryServiceManager {
 
             String requestId = MediaManager.get().upload(file.getAbsolutePath())
                     .option("api_key", BuildConfig.CLOUDINARY_API_KEY)
-                    .option("public_id", "user_images/" + userId + "/" + mealId)
+                    .option("public_id", userId + "/meals/" + mealId)
                     .options(options)
                     .callback(new UploadCallback() {
                         @Override
@@ -171,7 +170,7 @@ public class CloudinaryServiceManager {
             String userId = firebaseRepository.getCurrentUserId();
             String requestId = MediaManager.get().upload(uri)
                     .unsigned("my_preset") // Cloudinary konsolundan oluşturduğunuz preset adını buraya yazın
-                    .option("public_id", "user_images/" + userId + "/" + mealID)
+                    .option("public_id", userId + "/meals/" + mealID)
                     .callback(new UploadCallback() {
                         @Override
                         public void onStart(String requestId) {

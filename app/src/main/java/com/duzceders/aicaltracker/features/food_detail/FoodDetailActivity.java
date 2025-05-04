@@ -14,12 +14,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.duzceders.aicaltracker.databinding.ActivityFoodDetailBinding;
 import com.duzceders.aicaltracker.product.models.Meal;
+import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 
 import java.util.Objects;
 
 public class FoodDetailActivity extends AppCompatActivity {
     private ActivityFoodDetailBinding binding;
     private Meal meal;
+    private FirebaseRepository firebaseRepository;
 
 
     @Override
@@ -39,8 +41,9 @@ public class FoodDetailActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        firebaseRepository = new FirebaseRepository();
+
         getMealData();
-        setUI();
     }
 
     @Override
@@ -52,9 +55,26 @@ public class FoodDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getMealData() {
+    private String getMealIntent() {
         Intent intent = getIntent();
-        meal = (Meal) intent.getSerializableExtra("meal");
+        return intent.getStringExtra("mealId");
+    }
+
+    private void getMealData() {
+        String id = getMealIntent();
+        firebaseRepository.getMealById(id, new FirebaseRepository.MealCallback() {
+
+            @Override
+            public void onMealReceived(Meal meal) {
+                FoodDetailActivity.this.meal = meal;
+                setUI();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                finish();
+            }
+        });
     }
 
     private void setUI() {
@@ -95,7 +115,7 @@ public class FoodDetailActivity extends AppCompatActivity {
 
     private void setTimeInfo() {
         binding.mealTypeText.setText(meal.getMeal_type().toString());
-       // binding.mealTimeText.setText(meal.getMealTimeAsTimestamp());
+        // binding.mealTimeText.setText(meal.getMealTimeAsTimestamp());
 
     }
 

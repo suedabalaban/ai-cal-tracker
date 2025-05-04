@@ -2,7 +2,6 @@ package com.duzceders.aicaltracker.features.calorie_tracker.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +73,9 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    v.getContext().startActivity(new Intent(v.getContext(), FoodDetailActivity.class).putExtra("meal", mealList.get(getAdapterPosition())));
+                    Intent intent = new Intent(v.getContext(), FoodDetailActivity.class);
+                    intent.putExtra("mealId", mealList.get(getAdapterPosition()).getId());
+                    v.getContext().startActivity(intent);
                 }
             });
         }

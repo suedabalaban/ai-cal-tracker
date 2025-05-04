@@ -19,6 +19,7 @@ import com.duzceders.aicaltracker.product.parser.MealIDParser;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
 import com.duzceders.aicaltracker.product.utils.LanguageHelper;
+import com.google.firebase.Timestamp;
 
 import java.time.LocalTime;
 
@@ -81,19 +82,19 @@ public class FoodViewActivity extends AppCompatActivity {
         binding.saveButton.setOnClickListener(v -> {
             Meal meal = new Meal();
             meal.setMeal_name(binding.foodNameTextView.getText().toString());
-            ///add meal type logic
             meal.setImage_url(getIntent().getStringExtra("imageUrl"));
             meal.setUser_note(binding.userNoteEditText.getText().toString());
             meal.setProtein_g(foodInfo.getProtein());
             meal.setFat_g(foodInfo.getFat());
             meal.setCarbs_g(foodInfo.getCarbs());
             meal.setCalorie_kcal(foodInfo.getCalories());
-//          meal.setMeal_time(System.currentTimeMillis());
+            meal.setMeal_time(Timestamp.now());
             meal.setRecommendations(foodInfo.getRecommendations());
             MealType mealType = checkMealType(LocalTime.now());
             meal.setMeal_type(mealType);
 
             String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
+            meal.setId(mealID);
 
             firebaseRepository.updateUser(UserField.DAILY_CALORIE_NEEDS_LEFT, (user.getDaily_calorie_needs_left() - foodInfo.getCalories()));
             firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_CARBS_LEFT_G, (user.getDaily_macros().getDaily_carbs_left_g() - foodInfo.getCarbs()));

@@ -186,6 +186,27 @@ public class FirebaseRepository {
         });
     }
 
+    public void getMealById(String id, MealCallback callback) {
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated");
+            return;
+        }
+
+        db.collection("users").document(userId).collection("meals").document(id).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Meal meal = documentSnapshot.toObject(Meal.class);
+                callback.onMealReceived(meal);
+            } else {
+                Log.e(TAG, "Meal not found");
+                callback.onFailure(new Exception("Meal not found"));
+            }
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Error getting meal", e);
+            callback.onFailure(e);
+        });
+    }
+
 
     public void runDailyNeedsTask() {
         String userId = getCurrentUserId();
@@ -295,11 +316,11 @@ public class FirebaseRepository {
         void onFailure(Exception e);
     }
 
-//    public interface MealCallback {
-//        void onMealsReceived(List<Meal> meals);
-//
-//        void onFailure(Exception e);
-//    }
+    public interface MealCallback {
+        void onMealReceived(Meal meal);
+
+        void onFailure(Exception e);
+    }
 
 
     public void signOut() {
