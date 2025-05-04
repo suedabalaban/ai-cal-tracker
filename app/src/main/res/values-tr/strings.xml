@@ -157,4 +157,8 @@
     <string name="kcal">%1$s kcal</string>
     <string name="recommendations">Öneriler</string>
     <string name="notes">Notlarınız</string>
+
+    <string name="breakfast">Kahvaltı</string>
+    <string name="launch">Öğle Yemeği</string>
+    <string name="dinner">Akşam Yemeği</string>
 </resources>

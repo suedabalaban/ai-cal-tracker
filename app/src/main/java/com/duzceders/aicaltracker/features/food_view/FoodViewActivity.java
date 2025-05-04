@@ -91,7 +91,7 @@ public class FoodViewActivity extends AppCompatActivity {
             meal.setMeal_time(Timestamp.now());
             meal.setRecommendations(foodInfo.getRecommendations());
             MealType mealType = checkMealType(LocalTime.now());
-            meal.setMeal_type(mealType);
+            meal.setMeal_type(getString(mealType.mealTypeId));
 
             String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
             meal.setId(mealID);

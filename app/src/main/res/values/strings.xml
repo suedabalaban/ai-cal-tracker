@@ -156,4 +156,8 @@
     <string name="kcal">%1$s kcal</string>
     <string name="recommendations">Recommendations</string>
     <string name="notes">Your Notes</string>
+
+    <string name="breakfast">BREAKFAST</string>
+    <string name="launch">LAUNCH</string>
+    <string name="dinner">DINNER</string>
 </resources>

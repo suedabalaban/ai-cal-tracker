@@ -117,7 +117,7 @@ public class FoodDetailActivity extends AppCompatActivity {
     }
 
     private void setTimeInfo() {
-        binding.mealTypeText.setText(meal.getMeal_type().toString());
+        binding.mealTypeText.setText(meal.getMeal_type());
 
         Timestamp firebaseTimestamp = meal.getMeal_time();
         Date date = firebaseTimestamp.toDate();
