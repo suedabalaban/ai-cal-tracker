@@ -87,11 +87,10 @@ public class FoodViewActivity extends AppCompatActivity {
             meal.setFat_g(foodInfo.getFat());
             meal.setCarbs_g(foodInfo.getCarbs());
             meal.setCalorie_kcal(foodInfo.getCalories());
-            meal.setMeal_time(System.currentTimeMillis());
+//            meal.setMeal_time(System.currentTimeMillis());
             meal.setRecommendations(foodInfo.getRecommendations());
 
             String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
-
 
             firebaseRepository.updateUser(UserField.DAILY_CALORIE_NEEDS_LEFT, (user.getDaily_calorie_needs_left() - foodInfo.getCalories()));
             firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_CARBS_LEFT_G, (user.getDaily_macros().getDaily_carbs_left_g() - foodInfo.getCarbs()));
@@ -99,9 +98,7 @@ public class FoodViewActivity extends AppCompatActivity {
             firebaseRepository.updateUser(UserField.DAILY_MACROS_DAILY_PROTEINS_LEFT_G, (user.getDaily_macros().getDaily_proteins_left_g() - foodInfo.getProtein()));
 
             firebaseRepository.addMeal(meal, mealID);
-
             finish();
-            /// drawer activity tekrar tetiklenmeli
         });
     }
 

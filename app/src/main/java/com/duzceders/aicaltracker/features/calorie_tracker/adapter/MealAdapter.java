@@ -31,6 +31,12 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
         this.context = context;
     }
 
+
+    public void updateMeals(List<Meal> newMeals) {
+        this.mealList = newMeals;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,7 +55,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mealList.size();
+        return mealList != null ? mealList.size() : 0;
     }
 
     @Getter

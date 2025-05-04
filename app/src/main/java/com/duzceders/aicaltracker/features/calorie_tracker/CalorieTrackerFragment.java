@@ -54,6 +54,7 @@ public class CalorieTrackerFragment extends Fragment {
     private CalorieTrackerViewModel viewModel;
 
     private LoadingDialog loadingDialog;
+    private MealAdapter mealAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +75,6 @@ public class CalorieTrackerFragment extends Fragment {
 
         viewModel.getFoodInfoLiveData().observe(this, foodInfo -> {
             if (foodInfo != null) {
-
                 intent.putExtra("foodInfo", foodInfo);
                 loadingDialog.dismiss();
                 startActivity(intent);
@@ -102,33 +102,34 @@ public class CalorieTrackerFragment extends Fragment {
         });
 
         setClickListeners();
-        setRecyclerView();
+        setupRecyclerView();
+
+        viewModel.refreshMeals();
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.refreshMeals();
     }
 
-    private void setRecyclerView() {
+    private void setupRecyclerView() {
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        mealAdapter = new MealAdapter(null, requireContext());
+        binding.recyclerView.setAdapter(mealAdapter);
 
-        firebaseRepository.getUserMeals(new FirebaseRepository.MealCallback() {
-            @Override
-            public void onMealsReceived(List<Meal> meals) {
 
+        viewModel.getMeals().observe(getViewLifecycleOwner(), meals -> {
+            if (meals != null && !meals.isEmpty()) {
                 binding.startTrackingLabel.setVisibility(View.GONE);
                 binding.recyclerView.setVisibility(View.VISIBLE);
-                MealAdapter mealAdapter = new MealAdapter(meals, requireContext());
-
-                binding.recyclerView.setAdapter(mealAdapter);
-
-                binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-            }
-
-            @Override
-            public void onFailure(Exception e) {
+                mealAdapter.updateMeals(meals);
+            } else {
                 binding.startTrackingLabel.setVisibility(View.VISIBLE);
                 binding.recyclerView.setVisibility(View.GONE);
             }
         });
-
     }
-
 
     private void updateUiWithUserData(User user) {
 

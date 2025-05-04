@@ -68,11 +68,19 @@ public class FoodDetailActivity extends AppCompatActivity {
 
 
     private void setUserNotes() {
+        if (meal.getUser_note() == null || meal.getUser_note().isEmpty()) {
+            binding.notesCard.setVisibility(View.GONE);
+            return;
+        }
         String userNote = meal.getUser_note();
         binding.userNotesText.setText(userNote);
     }
 
     private void setRecommendations() {
+        if (meal.getRecommendations() == null || meal.getRecommendations().isEmpty()) {
+            binding.recommendationsCard.setVisibility(View.GONE);
+            return;
+        }
         String recommendations = meal.getRecommendations();
         binding.recommendationsText.setText(recommendations);
     }
