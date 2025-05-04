@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.duzceders.aicaltracker.product.models.FoodInfo;
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.UserField;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
 import com.duzceders.aicaltracker.product.service.manager.CloudinaryServiceManager;
@@ -36,6 +37,8 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
     private final SingleLiveEvent<FoodInfo> foodInfoLiveData = new SingleLiveEvent<>();
     @Getter
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    @Getter
+    private final MutableLiveData<Integer> waterGlassesFilled = new MutableLiveData<>(0);
 
     private final CloudinaryServiceManager cloudinaryServiceManager;
     private final GeminiAPIService geminiService;
@@ -123,6 +126,18 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
         }, mealId);
     }
 
+    public void setWaterGlassesFilled(int count) {
+        waterGlassesFilled.setValue(count);
+    }
+
+    public void saveWaterIntake(User user, int glassCount, double glassSize) {
+        if (user == null || glassCount <= 0) return;
+
+        double totalWaterConsumed = glassCount * glassSize;
+        double waterLeft = Math.max(0, user.getDaily_water_needs_left_liters() - totalWaterConsumed);
+        
+        repository.updateUser(UserField.DAILY_WATER_NEEDS_LEFT_LITERS, waterLeft);
+    }
 
     private void changeLoading() {
         isLoading.postValue(!isLoading.getValue());

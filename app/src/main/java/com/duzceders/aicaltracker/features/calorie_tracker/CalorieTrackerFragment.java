@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ import com.google.firebase.FirebaseApp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,12 +56,16 @@ public class CalorieTrackerFragment extends Fragment {
     private LoadingDialog loadingDialog;
     private MealAdapter mealAdapter;
 
+
+    private List<ImageView> waterGlasses;
+    private static final double GLASS_SIZE_LITERS = 0.25; // 250ml per glass
+    private User currentUser;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(requireContext());
         viewModel = new ViewModelProvider(this, new CalorieTrackerViewModelFactory(requireActivity().getApplication())).get(CalorieTrackerViewModel.class);
-
 
         loadingDialog = new LoadingDialog(requireContext());
         Intent intent = new Intent(getContext(), FoodViewActivity.class);
@@ -92,6 +98,7 @@ public class CalorieTrackerFragment extends Fragment {
 
         viewModel.getUserData().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
+                currentUser = user;
                 updateUiWithUserData(user);
             } else {
                 Toast.makeText(requireContext(), "Kullanıcı bulunamadı.", Toast.LENGTH_SHORT).show();
@@ -100,10 +107,13 @@ public class CalorieTrackerFragment extends Fragment {
 
         setClickListeners();
         setupRecyclerView();
+        setupWaterGlasses();
 
         viewModel.refreshMeals();
+
+        viewModel.getWaterGlassesFilled().observe(getViewLifecycleOwner(), this::updateWaterGlassesUI);
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
@@ -114,7 +124,6 @@ public class CalorieTrackerFragment extends Fragment {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         mealAdapter = new MealAdapter(null, requireContext());
         binding.recyclerView.setAdapter(mealAdapter);
-
 
         viewModel.getMeals().observe(getViewLifecycleOwner(), meals -> {
             if (meals != null && !meals.isEmpty()) {
@@ -129,8 +138,6 @@ public class CalorieTrackerFragment extends Fragment {
     }
 
     private void updateUiWithUserData(User user) {
-
-
         binding.totalCaloriesValue.setText(String.valueOf(Math.max(user.getDaily_calorie_needs_left(), 0)));
         binding.totalProteinValue.setText(String.valueOf(Math.max(user.getDaily_macros().getDaily_proteins_left_g(), 0)));
         binding.totalCarbsValue.setText(String.valueOf(Math.max(user.getDaily_macros().getDaily_carbs_left_g(), 0)));
@@ -193,6 +200,61 @@ public class CalorieTrackerFragment extends Fragment {
                 openGallery();
             }
         });
+
+        binding.btnSaveWaterIntake.setOnClickListener(v -> {
+            saveWaterIntake();
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setupWaterGlasses() {
+        waterGlasses = new ArrayList<>();
+        waterGlasses.add(binding.waterGlass1);
+        waterGlasses.add(binding.waterGlass2);
+        waterGlasses.add(binding.waterGlass3);
+        waterGlasses.add(binding.waterGlass4);
+        waterGlasses.add(binding.waterGlass5);
+
+
+        for (int i = 0; i < waterGlasses.size(); i++) {
+            final int glassIndex = i;
+            waterGlasses.get(i).setOnClickListener(v -> {
+                viewModel.setWaterGlassesFilled(glassIndex + 1);
+                double waterAmount = (glassIndex + 1) * GLASS_SIZE_LITERS;
+                binding.waterProgressText.setText("+" + waterAmount + "L");
+            });
+        }
+    }
+
+    private void updateWaterGlassesUI(int filledCount) {
+        for (int i = 0; i < waterGlasses.size(); i++) {
+            if (i < filledCount) {
+                waterGlasses.get(i).setImageResource(R.drawable.ic_water_glass_filled);
+            } else {
+                waterGlasses.get(i).setImageResource(R.drawable.ic_water_glass_empty);
+            }
+        }
+    }
+
+
+    private void saveWaterIntake() {
+        if (currentUser == null) {
+            showToast("Kullanıcı bilgisi yüklenemedi.");
+            return;
+        }
+
+        int filledCount = viewModel.getWaterGlassesFilled().getValue() != null ?
+                viewModel.getWaterGlassesFilled().getValue() : 0;
+
+        if (filledCount > 0) {
+            viewModel.saveWaterIntake(currentUser, filledCount, GLASS_SIZE_LITERS);
+            viewModel.setWaterGlassesFilled(0);
+            updateWaterGlassesUI(0);
+            binding.waterProgressText.setText("+0 L");
+            showToast(getString(R.string.water_intake_saved));
+        } else {
+            showToast(getString(R.string.select_water_amount));
+        }
     }
 
     private boolean checkPermission(String permission, int requestCode) {
@@ -239,7 +301,6 @@ public class CalorieTrackerFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -260,7 +321,7 @@ public class CalorieTrackerFragment extends Fragment {
     }
 
     private void showToast(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
     }
 
     @Override
