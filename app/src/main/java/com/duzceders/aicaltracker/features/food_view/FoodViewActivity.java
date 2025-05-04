@@ -13,13 +13,14 @@ import com.duzceders.aicaltracker.databinding.ActivityFoodViewBinding;
 import com.duzceders.aicaltracker.product.models.FoodInfo;
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
+import com.duzceders.aicaltracker.product.models.enums.MealType;
 import com.duzceders.aicaltracker.product.models.enums.UserField;
 import com.duzceders.aicaltracker.product.parser.MealIDParser;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
 import com.duzceders.aicaltracker.product.service.api.GeminiAPIService;
 import com.duzceders.aicaltracker.product.utils.LanguageHelper;
 
-import java.time.Instant;
+import java.time.LocalTime;
 
 public class FoodViewActivity extends AppCompatActivity {
 
@@ -87,8 +88,10 @@ public class FoodViewActivity extends AppCompatActivity {
             meal.setFat_g(foodInfo.getFat());
             meal.setCarbs_g(foodInfo.getCarbs());
             meal.setCalorie_kcal(foodInfo.getCalories());
-//            meal.setMeal_time(System.currentTimeMillis());
+//          meal.setMeal_time(System.currentTimeMillis());
             meal.setRecommendations(foodInfo.getRecommendations());
+            MealType mealType = checkMealType(LocalTime.now());
+            meal.setMeal_type(mealType);
 
             String mealID = MealIDParser.extractMealIdWithoutRegex(meal.getImage_url());
 
@@ -101,6 +104,20 @@ public class FoodViewActivity extends AppCompatActivity {
             finish();
         });
     }
+
+    private MealType checkMealType(LocalTime time) {
+        LocalTime noon = LocalTime.NOON; // 12:00
+        LocalTime sixPm = LocalTime.of(18, 0); // 18:00
+
+        if (time.isBefore(noon)) {
+            return MealType.BREAKFAST;
+        } else if (time.isBefore(sixPm)) {
+            return MealType.LAUNCH;
+        } else {
+            return MealType.DINNER;
+        }
+    }
+
 
     private void showToast(String message) {
         Toast.makeText(FoodViewActivity.this, message, Toast.LENGTH_SHORT).show();
