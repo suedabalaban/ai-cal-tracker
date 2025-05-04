@@ -162,4 +162,5 @@
     <string name="dinner">DINNER</string>
     <string name="water_intake_saved">Water intake saved!</string>
     <string name="select_water_amount">Please select the amount of water you drink.</string>
+    <string name="save_water_intake">Save Water Intake</string>
 </resources>

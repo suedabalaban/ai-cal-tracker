@@ -163,4 +163,5 @@
     <string name="dinner">Akşam Yemeği</string>
     <string name="water_intake_saved">Su tüketimi kaydedildi!</string>
     <string name="select_water_amount">Lütfen içtiğiniz su miktarını seçin.</string>
+    <string name="save_water_intake">Su Tüketimini Kaydet</string>
 </resources>
