@@ -127,5 +127,6 @@ public class ProfileFragment extends Fragment {
         binding.progressProteins.setProgress(calculateProgress(user.getDaily_macros().getDaily_proteins_left_g(), user.getDaily_macros().getDaily_proteins_need_g()));
         binding.progressCarbs.setProgress(calculateProgress(user.getDaily_macros().getDaily_carbs_left_g(), user.getDaily_macros().getDaily_carbs_need_g()));
         binding.progressFats.setProgress(calculateProgress(user.getDaily_macros().getDaily_fats_left_g(), user.getDaily_macros().getDaily_fats_need_g()));
+        binding.progressWater.setProgress(calculateProgress(user.getDaily_water_needs_left_liters(), user.getDaily_water_needs_liters()));
     }
 }
