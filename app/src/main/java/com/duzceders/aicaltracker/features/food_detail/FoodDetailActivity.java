@@ -15,7 +15,10 @@ import com.bumptech.glide.Glide;
 import com.duzceders.aicaltracker.databinding.ActivityFoodDetailBinding;
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.service.FirebaseRepository;
+import com.google.firebase.Timestamp;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 public class FoodDetailActivity extends AppCompatActivity {
@@ -115,9 +118,13 @@ public class FoodDetailActivity extends AppCompatActivity {
 
     private void setTimeInfo() {
         binding.mealTypeText.setText(meal.getMeal_type().toString());
-        // binding.mealTimeText.setText(meal.getMealTimeAsTimestamp());
 
+        Timestamp firebaseTimestamp = meal.getMeal_time();
+        Date date = firebaseTimestamp.toDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        binding.mealTimeText.setText(sdf.format(date));
     }
+
 
     private void setFoodName() {
         binding.foodName.setText(meal.getMeal_name());
