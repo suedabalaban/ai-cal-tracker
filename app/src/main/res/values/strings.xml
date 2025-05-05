@@ -163,4 +163,13 @@
     <string name="water_intake_saved">Water intake saved!</string>
     <string name="select_water_amount">Please select the amount of water you drink.</string>
     <string name="save_water_intake">Save Water Intake</string>
+ü
+    <string name="update_height">Update Height</string>
+    <string name="update_weight">Update Weight</string>
+    <string name="update_body_fat">Update Body Fat</string>
+    <string name="save">Save</string>
+    <string name="height_updated">Height information updated</string>
+    <string name="weight_updated">Weight information updated</string>
+    <string name="body_fat_updated">Body fat percentage updated</string>
+    <string name="invalid_value">Invalid value</string>
 </resources>

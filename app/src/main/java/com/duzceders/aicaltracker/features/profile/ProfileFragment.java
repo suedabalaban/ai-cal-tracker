@@ -1,9 +1,12 @@
 package com.duzceders.aicaltracker.features.profile;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,16 +64,97 @@ public class ProfileFragment extends Fragment {
         binding.tvBodyFat.setBackgroundResource(R.drawable.clickable_background);
 
         binding.tvHeight.setOnClickListener(v -> {
-            // Height click action
+            showHeightDialog(user.getHeight_cm());
         });
 
         binding.tvWeight.setOnClickListener(v -> {
-            // Weight click action
+            showWeightDialog(user.getWeight_kg());
         });
 
         binding.tvBodyFat.setOnClickListener(v -> {
-            // Body fat click action
+            showBodyFatDialog(user.getBody_fat_percent());
         });
+    }
+
+    private void showHeightDialog(int currentHeight) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.update_height);
+
+        final EditText input = new EditText(requireContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setText(String.valueOf(currentHeight));
+        builder.setView(input);
+
+        builder.setPositiveButton(R.string.save, (dialog, which) -> {
+            try {
+                int newHeight = Integer.parseInt(input.getText().toString().trim());
+                if (newHeight > 0) {
+                    viewModel.updateHeight(newHeight);
+                    Toast.makeText(requireContext(), R.string.height_updated, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), R.string.invalid_value, Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(requireContext(), R.string.invalid_value, Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void showWeightDialog(int currentWeight) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.update_weight);
+
+        final EditText input = new EditText(requireContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setText(String.valueOf(currentWeight));
+        builder.setView(input);
+
+        builder.setPositiveButton(R.string.save, (dialog, which) -> {
+            try {
+                int newWeight = Integer.parseInt(input.getText().toString().trim());
+                if (newWeight > 0) {
+                    viewModel.updateWeight(newWeight);
+                    Toast.makeText(requireContext(), R.string.weight_updated, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), R.string.invalid_value, Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(requireContext(), R.string.invalid_value, Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void showBodyFatDialog(int currentBodyFat) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.update_body_fat);
+
+        final EditText input = new EditText(requireContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setText(String.valueOf(currentBodyFat));
+        builder.setView(input);
+
+        builder.setPositiveButton(R.string.save, (dialog, which) -> {
+            try {
+                int newBodyFat = Integer.parseInt(input.getText().toString().trim());
+                if (newBodyFat >= 0 && newBodyFat <= 100) {
+                    viewModel.updateBodyFat(newBodyFat);
+                    Toast.makeText(requireContext(), R.string.body_fat_updated, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), R.string.invalid_body_fat, Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(requireContext(), R.string.invalid_value, Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
+
+        builder.show();
     }
 
     private void setCalorieGoals(User user) {
