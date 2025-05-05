@@ -10,6 +10,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.duzceders.aicaltracker.R;
 import com.duzceders.aicaltracker.product.models.FoodInfo;
 import com.duzceders.aicaltracker.product.models.Meal;
 import com.duzceders.aicaltracker.product.models.User;
@@ -39,9 +40,15 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     @Getter
     private final MutableLiveData<Integer> waterGlassesFilled = new MutableLiveData<>(0);
+    // Yeni hata mesajı için LiveData
+    @Getter
+    private final SingleLiveEvent<String> errorMessageLiveData = new SingleLiveEvent<>();
 
     private final CloudinaryServiceManager cloudinaryServiceManager;
     private final GeminiAPIService geminiService;
+
+    private static final String TAG = "CalorieTrackerViewModel";
+    private static final String TIMEOUT_MESSAGE = "Gemini API zaman aşımına uğradı. Lütfen tekrar deneyin.";
 
     public CalorieTrackerViewModel(Application application) {
         super(application);
@@ -68,7 +75,6 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
         String mealId = UUID.randomUUID().toString();
         byte[] imageBytes = bitmapToByteArray(image);
 
-
         cloudinaryServiceManager.uploadImageFromCamera(image, new CloudinaryServiceManager.CloudinaryUploadCallback() {
             @Override
             public void onSuccess(String imageUrl) {
@@ -83,6 +89,15 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
                     @Override
                     public void onError(Exception e) {
+                        Log.e(TAG, "Gemini API error: ", e);
+                        errorMessageLiveData.postValue(getApplication().getString(R.string.food_analysis_error));
+                        changeLoading();
+                    }
+
+                    @Override
+                    public void onTimeout() {
+                        Log.e(TAG, "Gemini API timeout");
+                        errorMessageLiveData.postValue(TIMEOUT_MESSAGE);
                         changeLoading();
                     }
                 });
@@ -90,10 +105,11 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String errorMessage) {
+                Log.e(TAG, "Cloudinary upload error: " + errorMessage);
+                errorMessageLiveData.postValue("Görsel yüklenirken bir hata oluştu: " + errorMessage);
                 changeLoading();
             }
         }, mealId);
-
     }
 
     public void analyzeImageFromGallery(Uri imageUri, byte[] imageBytes, Context context) {
@@ -114,6 +130,15 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
                     @Override
                     public void onError(Exception e) {
+                        Log.e(TAG, "Gemini API error: ", e);
+                        errorMessageLiveData.postValue(getApplication().getString(R.string.food_analysis_error));
+                        changeLoading();
+                    }
+
+                    @Override
+                    public void onTimeout() {
+                        Log.e(TAG, "Gemini API timeout");
+                        errorMessageLiveData.postValue(TIMEOUT_MESSAGE);
                         changeLoading();
                     }
                 });
@@ -121,6 +146,8 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String errorMessage) {
+                Log.e(TAG, "Cloudinary upload error: " + errorMessage);
+                errorMessageLiveData.postValue("Görsel yüklenirken bir hata oluştu: " + errorMessage);
                 changeLoading();
             }
         }, mealId);
@@ -135,7 +162,7 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
         double totalWaterConsumed = glassCount * glassSize;
         double waterLeft = Math.max(0, user.getDaily_water_needs_left_liters() - totalWaterConsumed);
-        
+
         repository.updateUser(UserField.DAILY_WATER_NEEDS_LEFT_LITERS, waterLeft);
     }
 
@@ -151,7 +178,6 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
 
     private FoodInfo processGeminiResponse(String result) {
         try {
-
             JSONObject fullResponse = new JSONObject(result);
             String textContent = fullResponse.getJSONArray("candidates").getJSONObject(0).getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text");
 
@@ -181,6 +207,7 @@ public class CalorieTrackerViewModel extends AndroidViewModel {
         } catch (JSONException e) {
             Log.e("GeminiAPI", "JSON parse error: " + e.getMessage());
             e.printStackTrace();
+            errorMessageLiveData.postValue(getApplication().getString(R.string.gemini_response_error));
         }
         return null;
     }

@@ -164,4 +164,7 @@
     <string name="water_intake_saved">Su tüketimi kaydedildi!</string>
     <string name="select_water_amount">Lütfen içtiğiniz su miktarını seçin.</string>
     <string name="save_water_intake">Su Tüketimini Kaydet</string>
+
+    <string name="gemini_response_error">"Gemini'den gelen cevap işlenemedi. Lütfen tekrar deneyin."</string>
+    <string name="food_analysis_error">"Yemek analizi yapılırken bir hata oluştu."></string>
 </resources>

@@ -10,6 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -23,13 +24,24 @@ public class GeminiAPIService {
     private static final String API_KEY = BuildConfig.GEMINI_API_KEY;
     private static final String PROJECT_ID = BuildConfig.GEMINI_PROJECT_ID;
     private static final String ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=" + API_KEY;
-    private static final OkHttpClient client = new OkHttpClient();
+
+    // Zaman aşımı değerleri (saniye cinsinden)
+    private static final int CONNECT_TIMEOUT = 15; // Bağlantı kurma süresi
+    private static final int READ_TIMEOUT = 30;    // Veri okuma süresi
+    private static final int WRITE_TIMEOUT = 15;   // Veri yazma süresi
+
+    // OkHttpClient'a timeout özelliği eklendi
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .build();
 
     // Callback interface
     public interface GeminiCallback {
         void onSuccess(String result);
-
         void onError(Exception e);
+        void onTimeout(); // Zaman aşımı için callback metodu
     }
 
     public void analyzeImage(Context context, byte[] imageBytes, GeminiCallback callback) {
@@ -82,7 +94,11 @@ public class GeminiAPIService {
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    callback.onError(e);
+                    if (e instanceof java.net.SocketTimeoutException) {
+                        callback.onTimeout();
+                    } else {
+                        callback.onError(e);
+                    }
                 }
 
                 @Override
@@ -105,7 +121,6 @@ public class GeminiAPIService {
     }
 
     private static String extractJson(String responseBody) {
-        // Gemini cevabından sadece JSON kısmını ayıklamak için basit bir yöntem
         int start = responseBody.indexOf('{');
         int end = responseBody.lastIndexOf('}');
         if (start != -1 && end != -1 && end > start) {
