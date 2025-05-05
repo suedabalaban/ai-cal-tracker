@@ -165,6 +165,11 @@
     <string name="select_water_amount">Lütfen içtiğiniz su miktarını seçin.</string>
     <string name="save_water_intake">Su Tüketimini Kaydet</string>
 
+
+  
+    <string name="gemini_response_error">"Gemini'den gelen cevap işlenemedi. Lütfen tekrar deneyin."</string>
+    <string name="food_analysis_error">"Yemek analizi yapılırken bir hata oluştu."></string>
+
     <string name="update_height">Boy Güncelleme</string>
     <string name="update_weight">Kilo Güncelleme</string>
     <string name="update_body_fat">Vücut Yağ Oranı Güncelleme</string>
@@ -173,4 +178,5 @@
     <string name="weight_updated">Kilo bilgisi güncellendi</string>
     <string name="body_fat_updated">Vücut yağ oranı bilgisi güncellendi</string>
     <string name="invalid_value">Geçersiz değer</string>
+
 </resources>
