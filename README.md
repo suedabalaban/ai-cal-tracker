@@ -43,8 +43,6 @@ One-tap calorie tracking! Our AI-powered calorie tracking application automatica
   <img src="https://github.com/user-attachments/assets/66aad144-57c9-470a-a71f-35f1242686b1" width="200"/>
   <img src="https://github.com/user-attachments/assets/427e971e-4bf6-44e7-8dcc-a48a9fd7017d" width="200"/>
   <img src="https://github.com/user-attachments/assets/228e55bb-d724-4680-9337-9212a202cdf8" width="200"/>
-  <img src="https://github.com/user-attachments/assets/8c3593f2-1541-470b-a37b-f9dc7f5f5420" width="200"/>
-
 </div>
 
 ### Main Interface
